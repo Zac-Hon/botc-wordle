@@ -80,6 +80,7 @@ SQL Editor, in filename order:
 | `08_pvp_sync_rematch.sql` | Synchronised starts, rematch |
 | `09_pvp_speed.sql` | Single round trip actions |
 | `10_cleanup_test_user.sql` | One-off: removes the test account |
+| `11_storyteller_tier.sql` | Fabled and Loric earn the top tier via Endless |
 
 All are re-runnable.
 

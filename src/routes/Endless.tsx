@@ -99,7 +99,9 @@ export function Endless() {
         {opts.storyteller && (
           <Alert severity="info" sx={{ mt: 1.5 }}>
             Fabled and Loric are in the pool. Their Script column just repeats their Type, and
-            their abilities all share one tag, so two of the seven clues stop being useful.
+            their abilities all share one tag, so two of the seven clues stop being useful. They
+            never appear in the dailies, so Endless is the only way to collect them, and a win
+            here earns them the gold ring.
           </Alert>
         )}
       </Paper>

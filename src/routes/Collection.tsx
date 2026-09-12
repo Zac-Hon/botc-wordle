@@ -168,9 +168,10 @@ export function Collection() {
                         sx={{
                           p: 0.35,
                           borderRadius: '50%',
-                          // A daily win is the higher tier and gets a gilded
-                          // ring; Endless and Versus wins unlock the character
-                          // without the mark.
+                          // The ring marks the best way that character can be
+                          // earned: a daily for player characters, and Endless
+                          // for Fabled and Loric, which the dailies never
+                          // serve. Set server side by record_collection.
                           border: '2px solid',
                           borderColor: daily ? 'primary.main' : 'transparent',
                           boxShadow: daily ? '0 0 10px rgba(200,169,81,0.45)' : 'none',
@@ -217,8 +218,9 @@ export function Collection() {
       })}
 
       <Typography variant="caption" color="text.secondary" align="center">
-        A gold ring means you named that character in a daily. Endless and Versus wins unlock the
-        character without the ring.
+        A gold ring means you earned that character the best way it can be earned: in a daily for
+        most, or in Endless for Fabled and Loric, which never appear in the dailies. Endless and
+        Versus wins on everyone else unlock the character without the ring.
       </Typography>
 
     </Stack>
