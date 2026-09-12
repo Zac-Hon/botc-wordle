@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import { Link as RouterLink } from 'react-router-dom'
 import { BY_ID } from '../data/pools'
+import { VersusStats, type PvpStats, type RatingRow } from '../components/VersusStats'
 import { VALUE_LABELS } from '../game/clueSpec'
 import { isConfigured, supabase } from '../lib/supabase'
 import { useAuth } from '../store/auth'
@@ -57,13 +58,15 @@ interface LeaderRow {
 
 export function Stats() {
   const { user, loading: authLoading } = useAuth()
-  const [tab, setTab] = useState<'me' | 'everyone'>('me')
+  const [tab, setTab] = useState<'me' | 'everyone' | 'versus'>('me')
   const [mode, setMode] = useState<DailyMode>('classic')
 
   const [rows, setRows] = useState<SessionRow[] | null>(null)
   const [detail, setDetail] = useState<DetailStats | null>(null)
   const [global, setGlobal] = useState<GlobalRow[] | null>(null)
   const [leaders, setLeaders] = useState<LeaderRow[] | null>(null)
+  const [pvp, setPvp] = useState<PvpStats | null>(null)
+  const [ladder, setLadder] = useState<RatingRow[] | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   // Sessions, the global table and today's board do not depend on the mode
@@ -71,15 +74,19 @@ export function Stats() {
   useEffect(() => {
     if (!user || !isConfigured) return
     void (async () => {
-      const [mine, glob, board] = await Promise.all([
+      const [mine, glob, board, versus, rank] = await Promise.all([
         supabase.from('game_sessions').select('mode, puzzle_date, guess_count, solved, is_archive'),
         supabase.rpc('global_stats'),
         supabase.rpc('daily_leaderboard', { p_date: todayUTC(), p_mode: null }),
+        supabase.rpc('my_pvp_stats'),
+        supabase.rpc('rating_leaderboard'),
       ])
       if (mine.error) setError(mine.error.message)
       setRows((mine.data as SessionRow[]) ?? [])
       setGlobal((glob.data as GlobalRow[]) ?? [])
       setLeaders((board.data as LeaderRow[]) ?? [])
+      setPvp((versus.data as PvpStats) ?? null)
+      setLadder((rank.data as RatingRow[]) ?? [])
     })()
   }, [user])
 
@@ -126,16 +133,22 @@ export function Stats() {
       <Typography variant="h5">Stats</Typography>
       {error && <Alert severity="error">{error}</Alert>}
 
-      <Tabs value={tab} onChange={(_, v: 'me' | 'everyone') => setTab(v)}>
-        <Tab value="me" label="You" />
+      <Tabs
+        value={tab}
+        onChange={(_, v: 'me' | 'everyone' | 'versus') => setTab(v)}
+        variant="scrollable"
+        scrollButtons="auto"
+      >
+        <Tab value="me" label="Dailies" />
         <Tab value="everyone" label="Everyone" />
+        <Tab value="versus" label="Versus" />
       </Tabs>
 
-      {tab === 'me' ? (
+      {tab === 'me' && (
         <MyStats rows={rows} detail={detail} mode={mode} setMode={setMode} leaders={leaders} />
-      ) : (
-        <Everyone rows={global} />
       )}
+      {tab === 'everyone' && <Everyone rows={global} />}
+      {tab === 'versus' && <VersusStats stats={pvp} ladder={ladder} />}
     </Stack>
   )
 }

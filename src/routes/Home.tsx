@@ -72,9 +72,9 @@ export function Home() {
     {
       to: '/pvp',
       title: 'Versus',
-      blurb: 'Two players. Recognise a token, race to deduce, then set one for each other.',
+      blurb: 'Queue for a ranked match, or play a friend with a code.',
       icon: <SportsKabaddiIcon fontSize="large" />,
-      chip: 'Live',
+      chip: 'Ranked',
     },
   ]
 

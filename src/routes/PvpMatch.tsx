@@ -75,7 +75,7 @@ export function PvpMatch() {
 
       <Scoreboard state={state} />
 
-      {state.status === 'lobby' && <Lobby state={state} pvp={pvp} />}
+      {state.status === 'lobby' && !state.ranked && <Lobby state={state} pvp={pvp} />}
 
       {state.status === 'active' && state.round && !state.round.live && state.round.startsAt && (
         <LeadIn
@@ -136,7 +136,11 @@ function Scoreboard({ state }: { state: PvpState }) {
               : `Cycle ${state.currentCycle} of ${state.cycles} · Round ${state.currentRound} of 3`}
         </Typography>
         <Box sx={{ flex: 1 }} />
-        <Chip size="small" variant="outlined" label={`Code ${state.joinCode}`} />
+        {state.ranked ? (
+          <Chip size="small" color="primary" label="Ranked" />
+        ) : (
+          <Chip size="small" variant="outlined" label={`Code ${state.joinCode}`} />
+        )}
       </Stack>
 
       <Stack spacing={1}>
@@ -159,9 +163,15 @@ function Scoreboard({ state }: { state: PvpState }) {
                 {p.username}
                 {p.isMe && ' (you)'}
               </Typography>
-              {(p.pronouns || p.isHost) && (
+              {(p.pronouns || p.isHost || (state.ranked && p.rating !== null)) && (
                 <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
-                  {[p.pronouns, p.isHost ? 'host' : null].filter(Boolean).join(' · ')}
+                  {[
+                    p.pronouns,
+                    state.ranked && p.rating !== null ? `${p.rating}` : null,
+                    !state.ranked && p.isHost ? 'host' : null,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
                 </Typography>
               )}
             </Box>
@@ -413,20 +423,22 @@ function Finished({ state, pvp }: { state: PvpState; pvp: ReturnType<typeof useP
         {sorted.map((p) => `${p.username} ${Math.round(p.score)}`).join(' · ')}
       </Typography>
       <Stack direction="row" spacing={1} sx={{ justifyContent: 'center', flexWrap: 'wrap' }} useFlexGap>
-        <Button
-          variant="contained"
-          disabled={busy}
-          onClick={async () => {
-            setBusy(true)
-            const id = await pvp.rematch()
-            setBusy(false)
-            if (id) navigate(`/pvp/${id}`)
-          }}
-        >
-          {busy ? 'Setting up...' : 'Rematch'}
-        </Button>
-        <Button component={RouterLink} to="/pvp">
-          New opponent
+        {!state.ranked && (
+          <Button
+            variant="contained"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true)
+              const id = await pvp.rematch()
+              setBusy(false)
+              if (id) navigate(`/pvp/${id}`)
+            }}
+          >
+            {busy ? 'Setting up...' : 'Rematch'}
+          </Button>
+        )}
+        <Button variant={state.ranked ? 'contained' : 'text'} component={RouterLink} to="/pvp">
+          {state.ranked ? 'Queue again' : 'New opponent'}
         </Button>
       </Stack>
     </Paper>

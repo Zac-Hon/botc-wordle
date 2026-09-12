@@ -162,6 +162,12 @@ export function HelpDialog({ open, onClose }: { open: boolean; onClose: () => vo
           how few guesses you used and how quickly, with speed carrying the larger share. Round
           three lets you each choose the character the other has to find.
         </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Ranked matches are queued rather than arranged, and always use the Daily Full pool with
+          one cycle, because a rating only means something if every ranked game is the same game.
+          Your rating starts at 1000 and moves with each result, by more while your first ten
+          games settle it. Private matches with a code never affect it.
+        </Typography>
 
         <Divider sx={{ my: 2 }} />
 

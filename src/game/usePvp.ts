@@ -9,6 +9,8 @@ export interface PvpPlayer {
   pronouns: string | null
   /** Character id of their chosen profile token, if they have set one. */
   avatar: string | null
+  /** Ranked rating, null until they have played a ranked match. */
+  rating: number | null
   score: number
   ready: boolean
   isHost: boolean
@@ -60,6 +62,8 @@ export interface PvpState {
   matchId: string
   joinCode: string
   status: 'lobby' | 'active' | 'finished' | 'abandoned'
+  /** Ranked matches have fixed settings and move your Elo. */
+  ranked: boolean
   isHost: boolean
   config: { base3: boolean; experimental: boolean; travellers: boolean }
   cycles: number

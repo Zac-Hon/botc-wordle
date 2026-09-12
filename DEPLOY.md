@@ -83,6 +83,7 @@ SQL Editor, in filename order:
 | `11_storyteller_tier.sql` | Fabled and Loric earn the top tier via Endless |
 | `12_pvp_time_scoring.sql` | Time counts in the Versus deduction rounds |
 | `13_pvp_time_weighting.sql` | Heavier time weighting, opponent pronouns in Versus |
+| `14_ranked_elo_queue.sql` | Ranked Versus: Elo ratings and the matchmaking queue |
 
 All are re-runnable.
 

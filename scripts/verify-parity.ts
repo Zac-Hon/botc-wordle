@@ -170,3 +170,68 @@ if (scoreMismatches > 0) {
   process.exit(1)
 }
 console.log('OK: PvP scoring agrees between TypeScript and Postgres.')
+
+// ---------------------------------------------------------------------------
+// Elo. This one lives only in SQL, because ratings are settled server side and
+// a client implementation would be dead code. The expectations below are a
+// reference implementation written for the test alone: they exist to catch a
+// typo in the plpgsql, not to be used by the app.
+// ---------------------------------------------------------------------------
+console.log('Checking Elo ...')
+let eloMismatches = 0
+
+const expectedScore = (a: number, b: number) => 1 / (1 + Math.pow(10, (b - a) / 400))
+const expectedK = (games: number, rating: number) =>
+  games < 10 ? 40 : rating >= 2000 ? 10 : 20
+
+for (const [a, b] of [
+  [1000, 1000],
+  [1200, 1000],
+  [1000, 1200],
+  [1600, 800],
+  [800, 1600],
+  [2400, 2400],
+] as const) {
+  const { data, error } = await supabase.rpc('elo_expected', { p_a: a, p_b: b })
+  if (error) {
+    console.error('elo_expected failed:', error.message)
+    process.exit(1)
+  }
+  const diff = Math.abs(Number(data) - expectedScore(a, b))
+  if (diff > 1e-6) {
+    eloMismatches++
+    console.error(`  elo_expected(${a}, ${b}): typescript ${expectedScore(a, b)}, postgres ${Number(data)}`)
+  }
+}
+
+for (const games of [0, 5, 9, 10, 50]) {
+  for (const rating of [800, 1000, 1999, 2000, 2400]) {
+    const { data, error } = await supabase.rpc('elo_k', { p_games: games, p_rating: rating })
+    if (error) {
+      console.error('elo_k failed:', error.message)
+      process.exit(1)
+    }
+    if (Number(data) !== expectedK(games, rating)) {
+      eloMismatches++
+      console.error(`  elo_k(${games}, ${rating}): expected ${expectedK(games, rating)}, got ${Number(data)}`)
+    }
+  }
+}
+
+// A rating system that is not zero sum quietly inflates or drains the ladder.
+{
+  const { data } = await supabase.rpc('elo_expected', { p_a: 1200, p_b: 1000 })
+  const ea = Number(data)
+  const { data: data2 } = await supabase.rpc('elo_expected', { p_a: 1000, p_b: 1200 })
+  const eb = Number(data2)
+  if (Math.abs(ea + eb - 1) > 1e-6) {
+    eloMismatches++
+    console.error(`  expectations do not sum to 1: ${ea} + ${eb}`)
+  }
+}
+
+if (eloMismatches > 0) {
+  console.error(`FAILED: ${eloMismatches} Elo disagreements.`)
+  process.exit(1)
+}
+console.log('OK: Elo behaves as specified.')
