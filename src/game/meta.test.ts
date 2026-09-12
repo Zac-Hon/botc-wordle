@@ -2,6 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { ALL_CHARACTERS } from '../data/pools'
 import { buildShareText } from '../components/ShareButton'
 import { computeStats, type SessionRow } from './stats'
+import {
+  PVP_GUESS_CAP,
+  SPEED_REFERENCE_MS,
+  scoreGuessRound,
+  scoreIconRound,
+} from './scoring'
 import { compare } from './compare'
 import type { GuessEntry } from '../components/GuessGrid'
 
@@ -205,5 +211,65 @@ describe('stats', () => {
     const s = computeStats([], 'classic', '2026-09-12')
     expect(s).toMatchObject({ played: 0, wins: 0, winRate: 0, currentStreak: 0, maxStreak: 0 })
     expect(s.averageGuesses).toBeNull()
+  })
+})
+
+describe('pvp scoring weighs time', () => {
+  const fast = 0
+  const slow = SPEED_REFERENCE_MS
+
+  it('pays more for the same guesses solved faster', () => {
+    expect(scoreGuessRound(3, true, 1, fast)).toBeGreaterThan(scoreGuessRound(3, true, 1, slow))
+  })
+
+  it('pays more for fewer guesses at the same speed', () => {
+    expect(scoreGuessRound(2, true, 1, 30_000)).toBeGreaterThan(
+      scoreGuessRound(5, true, 1, 30_000),
+    )
+  })
+
+  it('weighs speed and economy about equally', () => {
+    // Giving up all the speed bonus should cost about what giving up all the
+    // guess bonus costs. Neither dimension may quietly dominate.
+    const perfect = scoreGuessRound(1, true, 1, fast)
+    const slowButEfficient = scoreGuessRound(1, true, 1, slow)
+    const fastButWasteful = scoreGuessRound(PVP_GUESS_CAP, true, 1, fast)
+    expect(Math.abs((perfect - slowButEfficient) - (perfect - fastButWasteful))).toBeLessThanOrEqual(1)
+  })
+
+  it('tops out at 100 and bottoms out at 50 for a solve', () => {
+    expect(scoreGuessRound(1, true, 1, fast)).toBe(100)
+    expect(scoreGuessRound(PVP_GUESS_CAP, true, 1, slow)).toBe(50)
+  })
+
+  /**
+   * The invariant that matters: however slow and however wasteful, solving has
+   * to beat not solving. Otherwise a player is better off stalling.
+   */
+  it('always pays a solve more than any failure', () => {
+    const worstSolve = scoreGuessRound(PVP_GUESS_CAP, true, 1, SPEED_REFERENCE_MS * 10)
+    const bestFailure = scoreGuessRound(1, false, 1, 0)
+    expect(worstSolve).toBeGreaterThan(bestFailure)
+  })
+
+  it('decreases monotonically as the clock runs', () => {
+    let prev = Infinity
+    for (let t = 0; t <= SPEED_REFERENCE_MS * 1.5; t += 5_000) {
+      const s = scoreGuessRound(4, true, 1, t)
+      expect(s).toBeLessThanOrEqual(prev)
+      prev = s
+    }
+  })
+
+  it('gives an unmeasured solve no speed bonus rather than a full one', () => {
+    // Defaulting the other way would let a solve with a missing timestamp
+    // outscore a genuinely fast one.
+    expect(scoreGuessRound(4, true, 1)).toBe(scoreGuessRound(4, true, 1, SPEED_REFERENCE_MS))
+  })
+
+  it('still scores the icon round purely on speed', () => {
+    expect(scoreIconRound(0)).toBe(100)
+    expect(scoreIconRound(29_999)).toBe(40)
+    expect(scoreIconRound(30_000)).toBe(0)
   })
 })

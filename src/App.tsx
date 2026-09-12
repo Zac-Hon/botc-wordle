@@ -14,8 +14,11 @@ import Typography from '@mui/material/Typography'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutlineRounded'
 import { ThemeProvider } from '@mui/material/styles'
 import { Link as RouterLink } from 'react-router-dom'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { AccountMenu } from './components/AccountMenu'
 import { HelpDialog } from './components/HelpDialog'
+import { MobileNav } from './components/MobileNav'
+import { NAV_ITEMS } from './components/navItems'
 import { useAuth } from './store/auth'
 import { theme } from './theme/theme'
 
@@ -42,25 +45,15 @@ const Profile = lazy(() => import('./routes/Profile').then((m) => ({ default: m.
 const Pvp = lazy(() => import('./routes/Pvp').then((m) => ({ default: m.Pvp })))
 const PvpMatch = lazy(() => import('./routes/PvpMatch').then((m) => ({ default: m.PvpMatch })))
 
-const NAV = [
-  { to: '/home', label: 'Home' },
-  { to: '/daily/classic', label: 'Classic' },
-  { to: '/daily/full', label: 'Full' },
-  { to: '/endless', label: 'Endless' },
-  { to: '/collection', label: 'Collection' },
-  { to: '/archive', label: 'Archive' },
-  { to: '/pvp', label: 'Versus' },
-]
-
-function Nav() {
+function DesktopNav() {
   const { pathname } = useLocation()
   // Falls back to false rather than a wrong index, so MUI does not warn on
   // routes that are not tabs (sign-in, profile, stats).
-  const current = NAV.find((n) => pathname.startsWith(n.to))?.to ?? false
+  const current = NAV_ITEMS.find((n) => pathname.startsWith(n.to))?.to ?? false
 
   return (
     <Tabs value={current} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile>
-      {NAV.map((n) => (
+      {NAV_ITEMS.map((n) => (
         <Tab key={n.to} value={n.to} label={n.label} component={NavLink} to={n.to} />
       ))}
     </Tabs>
@@ -78,6 +71,8 @@ function RouteFallback() {
 export default function App() {
   const init = useAuth((s) => s.init)
   const [helpOpen, setHelpOpen] = useState(false)
+  // 900px: below this the seven tabs cannot sit on one line with the title.
+  const compact = useMediaQuery('(max-width:899px)')
 
   // Subscribes to auth changes for the life of the app; init returns its own
   // unsubscribe so StrictMode's double-invoke does not leak a listener.
@@ -92,27 +87,40 @@ export default function App() {
         color="transparent"
         sx={{ backdropFilter: 'blur(8px)' }}
       >
-        <Toolbar sx={{ gap: 1, flexWrap: 'wrap' }}>
+        {/* One row on a phone. Wrapping put the title, the tabs and the account
+            button on three separate lines and cost a third of the screen. */}
+        <Toolbar sx={{ gap: 0.5, minHeight: { xs: 56, md: 64 }, px: { xs: 1, sm: 2 } }}>
+          {compact && <MobileNav items={NAV_ITEMS} />}
+
           <Typography
             variant="h6"
             component={RouterLink}
             to="/"
-            sx={{ color: 'primary.main', textDecoration: 'none' }}
+            noWrap
+            sx={{
+              color: 'primary.main',
+              textDecoration: 'none',
+              fontSize: { xs: 18, sm: 20 },
+              mr: 1,
+            }}
           >
             Clocktowerdle
           </Typography>
-          <Nav />
+
+          {!compact && <DesktopNav />}
+
           <Box sx={{ flex: 1 }} />
+
           <Tooltip title="How to play">
             <IconButton size="small" onClick={() => setHelpOpen(true)} aria-label="How to play">
               <HelpOutlineIcon />
             </IconButton>
           </Tooltip>
-          <AccountMenu />
+          <AccountMenu compact={compact} />
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="md" sx={{ py: 2 }}>
+      <Container maxWidth="md" sx={{ py: { xs: 1.5, sm: 2 }, px: { xs: 1.5, sm: 3 } }}>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />

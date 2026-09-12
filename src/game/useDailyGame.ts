@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BY_ID } from '../data/pools'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../store/auth'
 import { revealHangman } from './hangman'
 import type { ClueRow } from './compare'
 import type { Character } from './types'
@@ -42,6 +43,7 @@ interface SessionResponse {
  * give-up. That is the whole reason the dailies go through RPCs.
  */
 export function useDailyGame(mode: DailyMode, date?: string) {
+  const handleStaleSession = useAuth((s) => s.handleStaleSession)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [guesses, setGuesses] = useState<GuessEntry[]>([])
   const [solved, setSolved] = useState(false)
@@ -72,6 +74,7 @@ export function useDailyGame(mode: DailyMode, date?: string) {
       .then(({ data, error: err }) => {
         if (cancelled) return
         if (err) {
+          if (handleStaleSession(err)) return
           setError(err.message)
           setLoading(false)
           return
@@ -89,7 +92,7 @@ export function useDailyGame(mode: DailyMode, date?: string) {
     return () => {
       cancelled = true
     }
-  }, [mode, date, toEntry])
+  }, [mode, date, toEntry, handleStaleSession])
 
   const finished = solved || gaveUp
   const wrongCount = guesses.length - (solved ? 1 : 0)
@@ -114,6 +117,7 @@ export function useDailyGame(mode: DailyMode, date?: string) {
       })
 
       if (err) {
+        if (handleStaleSession(err)) return
         setError(err.message)
         setSubmitting(false)
         return
@@ -126,13 +130,14 @@ export function useDailyGame(mode: DailyMode, date?: string) {
       if (r.answerId) setAnswer(BY_ID.get(r.answerId) ?? null)
       setSubmitting(false)
     },
-    [sessionId, finished, submitting, guessedIds, toEntry],
+    [sessionId, finished, submitting, guessedIds, toEntry, handleStaleSession],
   )
 
   const giveUp = useCallback(async () => {
     if (!sessionId || finished) return
     const { data, error: err } = await supabase.rpc('give_up', { p_session_id: sessionId })
     if (err) {
+      if (handleStaleSession(err)) return
       setError(err.message)
       return
     }
@@ -140,7 +145,7 @@ export function useDailyGame(mode: DailyMode, date?: string) {
     setGaveUp(true)
     setAnswerName(r.answerName)
     setAnswer(BY_ID.get(r.answerId) ?? null)
-  }, [sessionId, finished])
+  }, [sessionId, finished, handleStaleSession])
 
   return {
     guesses,

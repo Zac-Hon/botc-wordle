@@ -18,11 +18,17 @@ export interface GuessEntry {
  */
 const NAME_COL = 132
 const CLUE_COL = 84
+/** Narrower on a phone so more of the row is visible before scrolling. */
+const NAME_COL_XS = 96
+const CLUE_COL_XS = 72
 
 export function GuessGrid({ guesses }: { guesses: GuessEntry[] }) {
   if (guesses.length === 0) return null
 
-  const template = `${NAME_COL}px repeat(${CLUE_SPEC.length}, minmax(${CLUE_COL}px, 1fr))`
+  const template = {
+    xs: `${NAME_COL_XS}px repeat(${CLUE_SPEC.length}, minmax(${CLUE_COL_XS}px, 1fr))`,
+    sm: `${NAME_COL}px repeat(${CLUE_SPEC.length}, minmax(${CLUE_COL}px, 1fr))`,
+  }
 
   return (
     <Box
@@ -37,7 +43,14 @@ export function GuessGrid({ guesses }: { guesses: GuessEntry[] }) {
         '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(200,169,81,0.3)', borderRadius: 4 },
       }}
     >
-      <Box sx={{ minWidth: NAME_COL + CLUE_SPEC.length * CLUE_COL }}>
+      <Box
+        sx={{
+          minWidth: {
+            xs: NAME_COL_XS + CLUE_SPEC.length * CLUE_COL_XS,
+            sm: NAME_COL + CLUE_SPEC.length * CLUE_COL,
+          },
+        }}
+      >
         {/* Header */}
         <Box role="row" sx={{ display: 'grid', gridTemplateColumns: template, gap: 0.75, mb: 0 }}>
           <Box sx={{ ...stickyName, bgcolor: 'transparent' }} />
@@ -68,9 +81,12 @@ export function GuessGrid({ guesses }: { guesses: GuessEntry[] }) {
                 src={`${import.meta.env.BASE_URL}tokens/${g.image}`}
                 alt=""
                 loading="lazy"
-                sx={{ width: 34, height: 34, flexShrink: 0 }}
+                sx={{ width: { xs: 26, sm: 34 }, height: { xs: 26, sm: 34 }, flexShrink: 0 }}
               />
-              <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.1, fontSize: 12.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: 600, lineHeight: 1.1, fontSize: { xs: 11, sm: 12.5 } }}
+              >
                 {g.name}
               </Typography>
             </Box>

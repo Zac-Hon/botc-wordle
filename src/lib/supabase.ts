@@ -68,3 +68,23 @@ export function validateUsername(username: string): string | null {
   if (!USERNAME_PATTERN.test(u)) return 'Letters, numbers, hyphen and underscore only'
   return null
 }
+
+/**
+ * Detects a token belonging to an account that no longer exists.
+ *
+ * Deleting a user does not invalidate tokens already issued to them, so the
+ * browser keeps presenting a perfectly valid JWT for a row that has gone. Every
+ * write then fails on a foreign key against auth.users, and the raw Postgres
+ * message ends up in front of the player. Catching it lets us sign them out and
+ * say something useful instead.
+ */
+export function isStaleSession(error: { message?: string; code?: string } | null): boolean {
+  if (!error?.message) return false
+  const m = error.message.toLowerCase()
+  return (
+    error.code === '23503' ||
+    (m.includes('foreign key') && m.includes('user_id')) ||
+    m.includes('user from sub claim') ||
+    m.includes('user not found')
+  )
+}

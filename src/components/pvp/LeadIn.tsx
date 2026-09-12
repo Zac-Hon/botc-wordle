@@ -35,7 +35,7 @@ export function LeadIn({
   const seconds = Math.ceil(left / 1000)
 
   return (
-    <Paper elevation={0} sx={{ p: 4, textAlign: 'center' }}>
+    <Paper elevation={0} sx={{ p: { xs: 2.5, sm: 4 }, textAlign: 'center' }}>
       <Typography variant="overline" color="text.secondary">
         {label}
       </Typography>
@@ -44,7 +44,7 @@ export function LeadIn({
         key={seconds}
         sx={{
           fontFamily: 'inherit',
-          fontSize: 72,
+          fontSize: { xs: 56, sm: 72 },
           fontWeight: 700,
           lineHeight: 1.1,
           color: 'primary.main',

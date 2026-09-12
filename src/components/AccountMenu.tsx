@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
@@ -17,7 +18,7 @@ import { useAuth } from '../store/auth'
  * Clicking your name opens a menu rather than signing you out on the spot --
  * a single click that ends the session is far too easy to trigger by accident.
  */
-export function AccountMenu() {
+export function AccountMenu({ compact = false }: { compact?: boolean }) {
   const { user, username, signOut, loading } = useAuth()
   const [anchor, setAnchor] = useState<null | HTMLElement>(null)
   const navigate = useNavigate()
@@ -25,7 +26,11 @@ export function AccountMenu() {
   if (loading) return null
 
   if (!user) {
-    return (
+    return compact ? (
+      <IconButton size="small" component={RouterLink} to="/signin" aria-label="Sign in">
+        <AccountCircleIcon />
+      </IconButton>
+    ) : (
       <Button size="small" component={RouterLink} to="/signin" startIcon={<AccountCircleIcon />}>
         Sign in
       </Button>
@@ -36,15 +41,27 @@ export function AccountMenu() {
 
   return (
     <>
-      <Button
-        size="small"
-        onClick={(e) => setAnchor(e.currentTarget)}
-        startIcon={<AccountCircleIcon />}
-        aria-haspopup="menu"
-        aria-expanded={Boolean(anchor)}
-      >
-        {username ?? 'Account'}
-      </Button>
+      {compact ? (
+        <IconButton
+          size="small"
+          onClick={(e) => setAnchor(e.currentTarget)}
+          aria-haspopup="menu"
+          aria-expanded={Boolean(anchor)}
+          aria-label={username ?? 'Account'}
+        >
+          <AccountCircleIcon />
+        </IconButton>
+      ) : (
+        <Button
+          size="small"
+          onClick={(e) => setAnchor(e.currentTarget)}
+          startIcon={<AccountCircleIcon />}
+          aria-haspopup="menu"
+          aria-expanded={Boolean(anchor)}
+        >
+          {username ?? 'Account'}
+        </Button>
+      )}
 
       <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={close}>
         <MenuItem

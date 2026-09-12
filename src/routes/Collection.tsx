@@ -150,12 +150,15 @@ export function Collection() {
               </Stack>
             </AccordionSummary>
 
-            <AccordionDetails>
+            <AccordionDetails sx={{ px: { xs: 1, sm: 2 } }}>
               <Box
                 sx={{
                   display: 'grid',
                   gap: 1,
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))',
+                  gridTemplateColumns: {
+                    xs: 'repeat(auto-fill, minmax(52px, 1fr))',
+                    sm: 'repeat(auto-fill, minmax(64px, 1fr))',
+                  },
                 }}
               >
                 {characters.map((c) => {

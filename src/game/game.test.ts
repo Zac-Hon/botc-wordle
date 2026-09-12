@@ -276,19 +276,26 @@ describe('scoring', () => {
     }
   })
 
-  it('pays most for a one-guess solve and least at the cap', () => {
-    expect(scoreGuessRound(1, true, 1)).toBe(100)
-    expect(scoreGuessRound(PVP_GUESS_CAP, true, 1)).toBe(51)
+  it('pays most for a one-guess instant solve and least for a slow capped one', () => {
+    expect(scoreGuessRound(1, true, 1, 0)).toBe(100)
+    expect(scoreGuessRound(PVP_GUESS_CAP, true, 1, 120_000)).toBe(50)
   })
 
-  it('still pays the closest player when nobody solves', () => {
-    expect(scoreGuessRound(8, false, 1)).toBe(40)
-    expect(scoreGuessRound(8, false, 0.5)).toBe(20)
-    expect(scoreGuessRound(8, false, 0)).toBe(0)
+  it('treats an omitted elapsed time as no speed bonus', () => {
+    // 50 floor + 25 for a one-guess solve + 0 speed.
+    expect(scoreGuessRound(1, true, 1)).toBe(75)
+  })
+
+  it('still pays the closest player when nobody solves, regardless of clock', () => {
+    expect(scoreGuessRound(8, false, 1, 0)).toBe(40)
+    expect(scoreGuessRound(8, false, 0.5, 0)).toBe(20)
+    expect(scoreGuessRound(8, false, 0, 0)).toBe(0)
   })
 
   it('always rewards solving over not solving', () => {
-    expect(scoreGuessRound(PVP_GUESS_CAP, true, 0)).toBeGreaterThan(scoreGuessRound(1, false, 1))
+    expect(scoreGuessRound(PVP_GUESS_CAP, true, 0, 999_999)).toBeGreaterThan(
+      scoreGuessRound(1, false, 1, 0),
+    )
   })
 })
 

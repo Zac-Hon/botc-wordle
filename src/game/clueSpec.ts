@@ -86,6 +86,18 @@ export const CLUE_SPEC: readonly ClueColumn[] = [
   { key: 'jinxes', label: 'Jinxes', shortLabel: 'Jinx', kind: 'numeric', tolerance: 1 },
 ] as const
 
+/**
+ * Shorter forms for the narrowest cells.
+ *
+ * "Experimental" does not fit a phone-width clue cell at any readable size, and
+ * letting it break mid-word rendered it as "Experiment / al", which just looks
+ * like a bug. Only values that genuinely overflow belong here.
+ */
+export const VALUE_LABELS_SHORT: Record<string, string> = {
+  // Keyed on the raw attribute value, not the display label.
+  experimental: 'Exper.',
+}
+
 /** Human-readable labels for enum-valued attributes, used by the grid and share text. */
 export const VALUE_LABELS: Record<string, string> = {
   townsfolk: 'Townsfolk',

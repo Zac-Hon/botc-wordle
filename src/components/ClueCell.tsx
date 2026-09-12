@@ -1,12 +1,13 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { CLUE_COLORS } from '../theme/theme'
-import { VALUE_LABELS } from '../game/clueSpec'
+import { VALUE_LABELS, VALUE_LABELS_SHORT } from '../game/clueSpec'
 import { useSettings } from '../store/settings'
 import type { ClueCell as Cell } from '../game/compare'
 
 /** Human readable text for whatever the column holds. */
-function displayValue(cell: Cell): string {
+function displayValue(cell: Cell, short = false): string {
   const v = cell.value
   // Not a dash: a blank cell should say what it means. Characters who never
   // wake on the first night genuinely have no order, and "N/A" says so.
@@ -14,7 +15,10 @@ function displayValue(cell: Cell): string {
   if (Array.isArray(v)) {
     return v.map((t) => VALUE_LABELS[t] ?? t.replace(/-/g, ' ')).join(', ')
   }
-  if (typeof v === 'string') return VALUE_LABELS[v] ?? v
+  if (typeof v === 'string') {
+    if (short && VALUE_LABELS_SHORT[v]) return VALUE_LABELS_SHORT[v]
+    return VALUE_LABELS[v] ?? v
+  }
   return String(v)
 }
 
@@ -39,6 +43,7 @@ const GLYPH = { match: '✓', partial: '~', miss: '✗' } as const
 
 export function ClueCell({ cell, delayMs = 0 }: { cell: Cell; delayMs?: number }) {
   const colourblind = useSettings((s) => s.colourblind)
+  const narrow = useMediaQuery('(max-width:599px)')
 
   const bg = CLUE_COLORS[cell.result]
   const fg =
@@ -102,10 +107,14 @@ export function ClueCell({ cell, delayMs = 0 }: { cell: Cell; delayMs?: number }
             fontWeight: 600,
             lineHeight: 1.15,
             fontSize: { xs: 10, sm: 11.5 },
-            wordBreak: 'break-word',
+            // Wrap between words, and only split a word when there is genuinely
+            // no alternative. `break-word` was cutting "Experimental" in half.
+            overflowWrap: 'break-word',
+            wordBreak: 'normal',
+            hyphens: 'auto',
           }}
         >
-          {displayValue(cell)}
+          {displayValue(cell, narrow)}
         </Typography>
 
         {arrow && (

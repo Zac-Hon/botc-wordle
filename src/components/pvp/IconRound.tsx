@@ -75,7 +75,7 @@ export function IconRound({
 
   return (
     <Stack spacing={2}>
-      <Paper elevation={0} sx={{ p: 2.5, textAlign: 'center' }}>
+      <Paper elevation={0} sx={{ p: { xs: 1.5, sm: 2.5 }, textAlign: 'center' }}>
         <Typography variant="overline" color="text.secondary">
           Round {round.roundNo} · Name this character
         </Typography>
@@ -85,7 +85,13 @@ export function IconRound({
             component="img"
             src={`${import.meta.env.BASE_URL}tokens/${round.iconImage}`}
             alt="Character token"
-            sx={{ width: 180, height: 180, mx: 'auto', display: 'block', my: 1.5 }}
+            sx={{
+              width: { xs: 130, sm: 180 },
+              height: { xs: 130, sm: 180 },
+              mx: 'auto',
+              display: 'block',
+              my: 1.5,
+            }}
           />
         )}
 

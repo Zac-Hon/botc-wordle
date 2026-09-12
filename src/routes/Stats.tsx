@@ -164,7 +164,13 @@ function MyStats({
         <Tab value="full" label="Full" />
       </Tabs>
 
-      <Box sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))' }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 1,
+          gridTemplateColumns: { xs: 'repeat(3, 1fr)', sm: 'repeat(auto-fit, minmax(110px, 1fr))' },
+        }}
+      >
         <Stat label="Played" value={s.played} />
         <Stat label="Win rate" value={s.played ? `${Math.round(s.winRate * 100)}%` : 'N/A'} />
         <Stat label="Streak" value={s.currentStreak} />
@@ -330,7 +336,7 @@ function Everyone({ rows }: { rows: GlobalRow[] | null }) {
 
   return (
     <>
-      <Box sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' } }}>
+      <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' } }}>
         <Award
           title="Best average"
           player={bestAverage}
@@ -360,11 +366,15 @@ function Everyone({ rows }: { rows: GlobalRow[] | null }) {
             <TableHead>
               <TableRow>
                 <TableCell>Player</TableCell>
-                <TableCell align="right">Played</TableCell>
+                <TableCell align="right" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                  Played
+                </TableCell>
                 <TableCell align="right">Won</TableCell>
                 <TableCell align="right">Avg</TableCell>
-                <TableCell align="right">Best streak</TableCell>
-                <TableCell align="right">Collected</TableCell>
+                <TableCell align="right" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                  Streak
+                </TableCell>
+                <TableCell align="right">Owned</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -373,12 +383,16 @@ function Everyone({ rows }: { rows: GlobalRow[] | null }) {
                   <TableCell>
                     <PlayerCell username={r.username} pronouns={r.pronouns} avatar={r.avatar} />
                   </TableCell>
-                  <TableCell align="right">{r.played}</TableCell>
+                  <TableCell align="right" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                    {r.played}
+                  </TableCell>
                   <TableCell align="right">{r.wins}</TableCell>
                   <TableCell align="right">
                     {r.avg_guesses != null ? Number(r.avg_guesses).toFixed(2) : 'N/A'}
                   </TableCell>
-                  <TableCell align="right">{r.best_streak}</TableCell>
+                  <TableCell align="right" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                    {r.best_streak}
+                  </TableCell>
                   <TableCell align="right">{r.collected}</TableCell>
                 </TableRow>
               ))}
@@ -402,20 +416,32 @@ function Award({
   note: string
 }) {
   return (
-    <Paper elevation={0} sx={{ p: 2, textAlign: 'center' }}>
-      <EmojiEventsIcon sx={{ color: 'primary.main' }} />
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-        {title}
-      </Typography>
-      <Typography variant="h5" sx={{ fontFamily: 'inherit', fontWeight: 700 }}>
-        {value}
-      </Typography>
-      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-        {player?.username ?? 'Nobody yet'}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        {note}
-      </Typography>
+    <Paper
+      elevation={0}
+      sx={{
+        p: { xs: 1.5, sm: 2 },
+        textAlign: { xs: 'left', sm: 'center' },
+        display: 'flex',
+        flexDirection: { xs: 'row', sm: 'column' },
+        alignItems: 'center',
+        gap: { xs: 1.5, sm: 0 },
+      }}
+    >
+      <EmojiEventsIcon sx={{ color: 'primary.main', flexShrink: 0 }} />
+      <Box sx={{ minWidth: 0, flex: 1 }}>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+          {title}
+        </Typography>
+        <Typography variant="h5" sx={{ fontFamily: 'inherit', fontWeight: 700, lineHeight: 1.2 }}>
+          {value}
+        </Typography>
+        <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
+          {player?.username ?? 'Nobody yet'}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {note}
+        </Typography>
+      </Box>
     </Paper>
   )
 }
@@ -493,11 +519,23 @@ function Highlight({
 
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <Paper elevation={0} sx={{ p: 1.5, textAlign: 'center' }}>
-      <Typography variant="h5" sx={{ fontFamily: 'inherit', fontWeight: 700 }}>
+    <Paper elevation={0} sx={{ p: { xs: 1, sm: 1.5 }, textAlign: 'center' }}>
+      <Typography
+        sx={{
+          fontFamily: 'inherit',
+          fontWeight: 700,
+          // Long values such as "0/156" have to fit a third of a phone screen.
+          fontSize: { xs: 17, sm: 24 },
+          lineHeight: 1.2,
+        }}
+      >
         {value}
       </Typography>
-      <Typography variant="caption" color="text.secondary">
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ fontSize: { xs: 10, sm: 12 }, lineHeight: 1.2, display: 'block' }}
+      >
         {label}
       </Typography>
     </Paper>

@@ -17,7 +17,13 @@ import { createClient } from '@supabase/supabase-js'
 import { ALL_CHARACTERS } from '../src/data/pools.js'
 import { compare } from '../src/game/compare.js'
 import { rngFrom } from '../src/game/random.js'
-import { ICON_ROUND_MS, PVP_GUESS_CAP, scoreGuessRound, scoreIconRound } from '../src/game/scoring.js'
+import {
+  ICON_ROUND_MS,
+  PVP_GUESS_CAP,
+  SPEED_REFERENCE_MS,
+  scoreGuessRound,
+  scoreIconRound,
+} from '../src/game/scoring.js'
 
 const url = process.env.VITE_SUPABASE_URL
 const key = process.env.VITE_SUPABASE_ANON_KEY
@@ -120,23 +126,39 @@ for (let ms = 0; ms <= ICON_ROUND_MS + 5000; ms += 250) {
   }
 }
 
+const ELAPSED_CASES = [
+  0,
+  5_000,
+  30_000,
+  60_000,
+  SPEED_REFERENCE_MS - 1,
+  SPEED_REFERENCE_MS,
+  SPEED_REFERENCE_MS * 2,
+]
+
 for (let g = 1; g <= PVP_GUESS_CAP; g++) {
   for (const solved of [true, false]) {
     for (const frac of [0, 0.25, 0.5, 0.75, 1]) {
-      const { data, error } = await supabase.rpc('pvp_score_guesses', {
-        p_guesses: g,
-        p_solved: solved,
-        p_best_fraction: frac,
-      })
-      if (error) {
-        console.error('pvp_score_guesses failed:', error.message)
-        process.exit(1)
-      }
-      const expected = scoreGuessRound(g, solved, frac)
-      if (Number(data) !== expected) {
-        scoreMismatches++
-        if (scoreMismatches <= 5) {
-          console.error(`  guesses=${g} solved=${solved} frac=${frac}: typescript ${expected}, postgres ${Number(data)}`)
+      for (const elapsed of ELAPSED_CASES) {
+        const { data, error } = await supabase.rpc('pvp_score_guesses', {
+          p_guesses: g,
+          p_solved: solved,
+          p_best_fraction: frac,
+          p_elapsed_ms: elapsed,
+        })
+        if (error) {
+          console.error('pvp_score_guesses failed:', error.message)
+          process.exit(1)
+        }
+        const expected = scoreGuessRound(g, solved, frac, elapsed)
+        if (Number(data) !== expected) {
+          scoreMismatches++
+          if (scoreMismatches <= 5) {
+            console.error(
+              `  guesses=${g} solved=${solved} frac=${frac} elapsed=${elapsed}: ` +
+                `typescript ${expected}, postgres ${Number(data)}`,
+            )
+          }
         }
       }
     }

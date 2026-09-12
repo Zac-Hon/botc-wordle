@@ -183,14 +183,19 @@ function Lobby({ state, pvp }: { state: PvpState; pvp: ReturnType<typeof usePvp>
   }
 
   return (
-    <Paper elevation={0} sx={{ p: 2.5 }}>
+    <Paper elevation={0} sx={{ p: { xs: 1.75, sm: 2.5 } }}>
       <Typography variant="subtitle1" gutterBottom>
         Invite your opponent
       </Typography>
       <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 2 }}>
         <Typography
-          variant="h4"
-          sx={{ letterSpacing: 6, fontFamily: 'ui-monospace, monospace', color: 'primary.main' }}
+          sx={{
+            letterSpacing: { xs: 3, sm: 6 },
+            fontSize: { xs: 26, sm: 34 },
+            fontWeight: 700,
+            fontFamily: 'ui-monospace, monospace',
+            color: 'primary.main',
+          }}
         >
           {state.joinCode}
         </Typography>

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { Session, User } from '@supabase/supabase-js'
-import { supabase, usernameToEmail, validateUsername } from '../lib/supabase'
+import { isStaleSession, supabase, usernameToEmail, validateUsername } from '../lib/supabase'
 
 interface AuthState {
   session: Session | null
@@ -16,6 +16,8 @@ interface AuthState {
   signUp: (username: string, password: string) => Promise<void>
   signIn: (username: string, password: string) => Promise<void>
   signOut: () => Promise<void>
+  /** Clears a session whose account no longer exists. */
+  handleStaleSession: (error: { message?: string; code?: string } | null) => boolean
   clearError: () => void
 }
 
@@ -95,6 +97,18 @@ export const useAuth = create<AuthState>((set, get) => ({
   signOut: async () => {
     await supabase.auth.signOut()
     set({ session: null, user: null, username: null })
+  },
+
+  handleStaleSession: (error) => {
+    if (!isStaleSession(error)) return false
+    void supabase.auth.signOut()
+    set({
+      session: null,
+      user: null,
+      username: null,
+      error: 'That account no longer exists. Please sign in again.',
+    })
+    return true
   },
 
   clearError: () => set({ error: null }),

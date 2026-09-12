@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BY_ID } from '../data/pools'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../store/auth'
 import { compare, type ClueRow } from './compare'
 import { loadRecent, pickEndless, rememberRecent } from './endlessPicker'
 import { revealHangman } from './hangman'
@@ -21,6 +22,7 @@ import type { GuessEntry } from '../components/GuessGrid'
  * because there is no account to credit and no way to check them.
  */
 export function useEndlessGame(pool: Character[], opts: EndlessPoolOptions, signedIn: boolean) {
+  const handleStaleSession = useAuth((s) => s.handleStaleSession)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [guesses, setGuesses] = useState<GuessEntry[]>([])
   const [solved, setSolved] = useState(false)
@@ -61,12 +63,13 @@ export function useEndlessGame(pool: Character[], opts: EndlessPoolOptions, sign
     })
     setBusy(false)
     if (err) {
+      if (handleStaleSession(err)) return
       setError(err.message)
       return
     }
     setLocalAnswer(null)
     setSessionId((data as { sessionId: string }).sessionId)
-  }, [pool, opts, signedIn, reset])
+  }, [pool, opts, signedIn, reset, handleStaleSession])
 
   // Deal on mount, and re-deal when the pool changes underneath the game.
   const poolKey = useMemo(() => JSON.stringify(opts), [opts])
@@ -115,6 +118,7 @@ export function useEndlessGame(pool: Character[], opts: EndlessPoolOptions, sign
       })
       setBusy(false)
       if (err) {
+        if (handleStaleSession(err)) return
         setError(err.message)
         return
       }
@@ -142,7 +146,7 @@ export function useEndlessGame(pool: Character[], opts: EndlessPoolOptions, sign
         if (r.answerId) setAnswer(BY_ID.get(r.answerId) ?? null)
       }
     },
-    [finished, busy, guessedIds, signedIn, localAnswer, sessionId],
+    [finished, busy, guessedIds, signedIn, localAnswer, sessionId, handleStaleSession],
   )
 
   const giveUp = useCallback(async () => {
@@ -155,6 +159,7 @@ export function useEndlessGame(pool: Character[], opts: EndlessPoolOptions, sign
     if (!sessionId) return
     const { data, error: err } = await supabase.rpc('give_up_endless', { p_session_id: sessionId })
     if (err) {
+      if (handleStaleSession(err)) return
       setError(err.message)
       return
     }
@@ -162,7 +167,7 @@ export function useEndlessGame(pool: Character[], opts: EndlessPoolOptions, sign
     setGaveUp(true)
     setAnswerName(r.answerName)
     setAnswer(BY_ID.get(r.answerId) ?? null)
-  }, [finished, signedIn, localAnswer, sessionId])
+  }, [finished, signedIn, localAnswer, sessionId, handleStaleSession])
 
   return {
     guesses,

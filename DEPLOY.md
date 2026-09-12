@@ -81,13 +81,14 @@ SQL Editor, in filename order:
 | `09_pvp_speed.sql` | Single round trip actions |
 | `10_cleanup_test_user.sql` | One-off: removes the test account |
 | `11_storyteller_tier.sql` | Fabled and Loric earn the top tier via Endless |
+| `12_pvp_time_scoring.sql` | Time counts in the Versus deduction rounds |
 
 All are re-runnable.
 
 ## Before you share the link
 
 ```bash
-npm test              # 142 tests
+npm test              # 151 tests
 npm run verify:parity # TypeScript and Postgres agree on every clue and score
 npm run build         # must succeed
 ```
