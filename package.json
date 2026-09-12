@@ -1,0 +1,41 @@
+{
+  "name": "botc-wordle",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "build:data": "tsx scripts/build-characters.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "analyse:clues": "tsx scripts/analyse-clues.ts",
+    "build:dailies": "tsx scripts/seed-dailies.ts",
+    "verify:parity": "tsx --env-file=.env scripts/verify-parity.ts",
+    "verify:data": "vitest run src/game/game.test.ts"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.4.0",
+    "@mui/material": "^9.4.0",
+    "@supabase/supabase-js": "^2.116.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "tsx": "^4.23.13",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
+  }
+}

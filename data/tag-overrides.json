@@ -1,0 +1,36 @@
+{
+  "_comment": [
+    "Hand-curated ability tags. This file is the AUTHORITY: any id present here",
+    "completely replaces the keyword-derived tags from scripts/tag-rules.ts.",
+    "Entries starting with _ are ignored by the build.",
+    "",
+    "These 24 fell through the keyword rules to 'no-ability'. Every one of them",
+    "does have an ability, so each is tagged by hand below. Review these -- they",
+    "are judgement calls and they drive a clue column."
+  ],
+
+  "alhadikhia": ["killing", "information", "voting-social"],
+  "alchemist": ["ability-granting", "self-targeting"],
+  "alsaahir": ["information", "voting-social"],
+  "apprentice": ["ability-granting", "self-targeting"],
+  "artist": ["information"],
+  "barista": ["protection", "ability-granting"],
+  "bonecollector": ["ability-granting", "death-triggered"],
+  "cacklejack": ["ability-granting"],
+  "damsel": ["information", "voting-social"],
+  "engineer": ["ability-granting", "information"],
+  "exorcist": ["protection", "information"],
+  "fisherman": ["information"],
+  "fool": ["protection", "death-triggered"],
+  "gossip": ["killing", "voting-social"],
+  "highpriestess": ["information"],
+  "matron": ["voting-social"],
+  "pithag": ["ability-granting"],
+  "politician": ["self-targeting"],
+  "preacher": ["protection", "information"],
+  "professor": ["protection", "ability-granting", "death-triggered"],
+  "snitch": ["misinformation"],
+  "tinker": ["death-triggered", "self-targeting"],
+  "wizard": ["ability-granting"],
+  "wraith": ["information", "self-targeting"]
+}
