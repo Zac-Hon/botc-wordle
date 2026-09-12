@@ -282,3 +282,38 @@ describe('pvp scoring weighs time', () => {
     expect(scoreIconRound(30_000)).toBe(0)
   })
 })
+
+/**
+ * Ability tags are derived from official text by keyword rules, which makes
+ * them vulnerable to negation: "(not yourself)" contains the word "yourself"
+ * and means the opposite. That inverted eight characters, the Butler among
+ * them, before it was noticed.
+ */
+describe('ability tags respect negation', () => {
+  const negatesSelf = ALL_CHARACTERS.filter((c) =>
+    /\((?:not|other than|except)\s+yourself/i.test(c.ability),
+  )
+
+  it('finds the characters whose ability excludes themselves', () => {
+    expect(negatesSelf.length).toBeGreaterThan(5)
+  })
+
+  it('does not tag them self-targeting on the strength of that phrase alone', () => {
+    // Some still qualify for a different reason: the Ogre chooses another
+    // player but the effect ("you become their alignment") lands on itself.
+    const wrong = negatesSelf.filter(
+      (c) => c.attrs.tags.includes('self-targeting') && !/\byou become\b|\byou gain\b/i.test(c.ability),
+    )
+    expect(wrong.map((c) => c.name)).toEqual([])
+  })
+
+  it('keeps the Butler off the self-targeting list', () => {
+    const butler = ALL_CHARACTERS.find((c) => c.id === 'butler')
+    expect(butler?.attrs.tags).not.toContain('self-targeting')
+  })
+
+  it('still tags genuine self-reference, such as the Imp killing itself', () => {
+    const imp = ALL_CHARACTERS.find((c) => c.id === 'imp')
+    expect(imp?.attrs.tags).toContain('self-targeting')
+  })
+})

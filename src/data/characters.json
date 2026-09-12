@@ -626,8 +626,7 @@
       "wake": "both",
       "nightOrder": 10,
       "tags": [
-        "voting-social",
-        "self-targeting"
+        "voting-social"
       ],
       "reminders": 1,
       "jinxes": 0
@@ -677,8 +676,7 @@
       "wake": "both",
       "nightOrder": 55,
       "tags": [
-        "voting-social",
-        "self-targeting"
+        "voting-social"
       ],
       "reminders": 1,
       "jinxes": 2
@@ -729,7 +727,8 @@
       "nightOrder": null,
       "tags": [
         "misinformation",
-        "voting-social"
+        "voting-social",
+        "ability-granting"
       ],
       "reminders": 2,
       "jinxes": 4
@@ -780,8 +779,7 @@
       "wake": "both",
       "nightOrder": 73,
       "tags": [
-        "information",
-        "self-targeting"
+        "information"
       ],
       "reminders": 0,
       "jinxes": 1
@@ -1085,8 +1083,7 @@
       "wake": "both",
       "nightOrder": 58,
       "tags": [
-        "information",
-        "self-targeting"
+        "information"
       ],
       "reminders": 0,
       "jinxes": 0
@@ -1266,6 +1263,7 @@
       "nightOrder": null,
       "tags": [
         "killing",
+        "ability-granting",
         "setup-modifier"
       ],
       "reminders": 2,
@@ -1976,6 +1974,7 @@
       "wake": "never",
       "nightOrder": null,
       "tags": [
+        "ability-granting",
         "setup-modifier"
       ],
       "reminders": 3,
@@ -2051,6 +2050,7 @@
       "wake": "both",
       "nightOrder": 46,
       "tags": [
+        "ability-granting",
         "setup-modifier"
       ],
       "reminders": 1,
@@ -2738,8 +2738,7 @@
       "wake": "other",
       "nightOrder": null,
       "tags": [
-        "protection",
-        "self-targeting"
+        "protection"
       ],
       "reminders": 1,
       "jinxes": 2
@@ -3071,7 +3070,8 @@
       "tags": [
         "information",
         "killing",
-        "misinformation"
+        "misinformation",
+        "ability-granting"
       ],
       "reminders": 2,
       "jinxes": 0
@@ -3631,6 +3631,7 @@
       "wake": "other",
       "nightOrder": null,
       "tags": [
+        "ability-granting",
         "self-targeting"
       ],
       "reminders": 1,
@@ -3656,8 +3657,7 @@
       "wake": "both",
       "nightOrder": 59,
       "tags": [
-        "information",
-        "self-targeting"
+        "information"
       ],
       "reminders": 1,
       "jinxes": 0
@@ -3958,6 +3958,7 @@
       "wake": "both",
       "nightOrder": 21,
       "tags": [
+        "ability-granting",
         "setup-modifier"
       ],
       "reminders": 3,
@@ -4034,8 +4035,7 @@
       "wake": "both",
       "nightOrder": 11,
       "tags": [
-        "voting-social",
-        "self-targeting"
+        "voting-social"
       ],
       "reminders": 1,
       "jinxes": 0

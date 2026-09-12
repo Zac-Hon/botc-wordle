@@ -77,14 +77,14 @@ const RULES: { tag: AbilityTag; patterns: RegExp[] }[] = [
   {
     tag: 'ability-granting',
     patterns: [
-      /you have (?:a|all|the).*abilit(?:y|ies)/i,
-      /you gain/i,
-      /they (?:gain|regain)/i,
-      /becomes? (?:a|an|the).*(?:character|Townsfolk|Outsider|Minion|Demon)/i,
-      /changes? character/i,
-      /has? no ability/i,
-      /gets? \d+ bluffs?/i,
-      /resurrect/i,
+      /\byou have (?:a|all|the)\b.*\babilit(?:y|ies)\b/i,
+      /\byou gain\b/i,
+      /\bthey (?:gain|regain)\b/i,
+      /\bbecomes? (?:a|an|the)\b.*\b(?:character|Townsfolk|Outsider|Minion|Demon)\b/i,
+      /\bchanges? character\b/i,
+      /\bhas? no ability\b/i,
+      /\bgets? \d+ bluffs?\b/i,
+      /\bresurrect/i,
     ],
   },
   {
@@ -99,6 +99,21 @@ const RULES: { tag: AbilityTag; patterns: RegExp[] }[] = [
 ]
 
 /**
+ * Removes phrases that EXCLUDE the self, before any keyword matching.
+ *
+ * "Each night, choose a player (not yourself)" contains the word "yourself" and
+ * means precisely the opposite of self-targeting. Matching the bare keyword
+ * tagged eight characters, the Butler and the Monk among them, with the inverse
+ * of what their ability actually says. Genuine self-reference such as the Imp's
+ * "if you kill yourself this way" is left untouched.
+ */
+function stripSelfExclusions(ability: string): string {
+  return ability
+    .replace(/\((?:not|other than|except)\s+yourself[^)]*\)/gi, '')
+    .replace(/\b(?:not|other than|except|but not)\s+yourself\b/gi, '')
+}
+
+/**
  * Derive draft tags from ability text. Storyteller characters bypass this.
  *
  * `affectsSetup` comes from the official `setup` flag rather than the text. It
@@ -107,7 +122,8 @@ const RULES: { tag: AbilityTag; patterns: RegExp[] }[] = [
  * standing) but a signal players know well for the famous cases like the Baron.
  */
 export function deriveTags(ability: string, affectsSetup: boolean): AbilityTag[] {
-  const hits = RULES.filter((r) => r.patterns.some((p) => p.test(ability))).map((r) => r.tag)
+  const text = stripSelfExclusions(ability)
+  const hits = RULES.filter((r) => r.patterns.some((p) => p.test(text))).map((r) => r.tag)
   if (affectsSetup) hits.push('setup-modifier')
   return hits.length > 0 ? hits : ['no-ability']
 }
