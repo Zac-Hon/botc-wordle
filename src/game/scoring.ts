@@ -17,23 +17,31 @@ export const ICON_ROUND_MS = 30_000
 /** Guess cap for the two deduction rounds. */
 export const PVP_GUESS_CAP = 8
 
-const ICON_FLOOR = 40
+const ICON_FLOOR = 25
 const CEILING = 100
 
 /**
  * Floor for a solve in a deduction round.
  *
  * It sits above UNSOLVED_CEILING on purpose: solving must never pay less than
- * failing, however slow or expensive the solve was.
+ * failing, however slow or expensive the solve was. Lowering the floor is what
+ * buys room for the speed range below.
  */
-const SOLVED_FLOOR = 50
+const SOLVED_FLOOR = 30
 /** Most a player can earn without solving, scaled by how close they got. */
-const UNSOLVED_CEILING = 40
+const UNSOLVED_CEILING = 25
 
 /** Points available for economy of guesses. */
 const GUESS_WEIGHT = 25
-/** Points available for speed. Equal to GUESS_WEIGHT: neither dominates. */
-const SPEED_WEIGHT = 25
+/**
+ * Points available for speed, now the largest single component.
+ *
+ * With 45 points spread across a 90 second window, a second is worth half a
+ * point, so twenty seconds of hesitation costs ten. The earlier settings put
+ * 25 points across 120 seconds, barely a fifth of a point a second, which is
+ * why the clock made so little difference to the final score.
+ */
+const SPEED_WEIGHT = 45
 
 /**
  * Speed stops earning anything past this point.
@@ -41,18 +49,19 @@ const SPEED_WEIGHT = 25
  * The round itself runs for five minutes, but scaling against that would make
  * the bonus meaningless: almost every solve lands inside the first minute, so
  * everyone would sit at the top of the curve and the bonus would separate
- * nobody. Two minutes covers the range real solves actually occupy.
+ * nobody. Ninety seconds keeps the points concentrated where real solves
+ * actually land, which is what makes individual seconds worth something.
  */
-export const SPEED_REFERENCE_MS = 120_000
+export const SPEED_REFERENCE_MS = 90_000
 
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n))
 
 /**
  * Points for naming the character from its token art.
  *
- * Linear from 100 at instant recognition down to 40 as the clock runs out, so
- * being first is worth roughly two and a half times being last-but-correct.
- * Both players can score; there is no winner-takes-all.
+ * Linear from 100 at instant recognition down to 25 as the clock runs out, so
+ * recognising a token instantly is worth four times recognising it at the
+ * buzzer. Both players can score; there is no winner-takes-all.
  */
 export function scoreIconRound(elapsedMs: number): number {
   if (elapsedMs >= ICON_ROUND_MS) return 0
@@ -76,9 +85,10 @@ export function speedFactor(elapsedMs: number): number {
  *
  * A solve pays SOLVED_FLOOR plus up to GUESS_WEIGHT for economy and up to
  * SPEED_WEIGHT for speed, so a first-guess instant solve is 100 and a slow
- * eight-guess solve is 50. If nobody solves it, the closest guess still earns
- * something, scaled by how much of the clue row they had matched, to a maximum
- * of UNSOLVED_CEILING, so a round nobody wins is not a dead round.
+ * eight-guess solve is 30. Speed carries the largest share deliberately: the
+ * clock should decide close rounds. If nobody solves it, the closest guess
+ * still earns something scaled by how much of the clue row they matched, to a
+ * maximum of UNSOLVED_CEILING, so a round nobody wins is not a dead round.
  */
 export function scoreGuessRound(
   guesses: number,

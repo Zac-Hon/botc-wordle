@@ -6,8 +6,12 @@ import type { ClueRow } from './compare'
 export interface PvpPlayer {
   userId: string
   username: string
+  pronouns: string | null
+  /** Character id of their chosen profile token, if they have set one. */
+  avatar: string | null
   score: number
   ready: boolean
+  isHost: boolean
   isMe: boolean
 }
 

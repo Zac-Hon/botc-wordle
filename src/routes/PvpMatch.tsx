@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Avatar from '@mui/material/Avatar'
 import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -13,7 +14,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
-import { ALL_CHARACTERS } from '../data/pools'
+import { ALL_CHARACTERS, BY_ID } from '../data/pools'
 import { GuessInput } from '../components/GuessInput'
 import { DeductionRound } from '../components/pvp/DeductionRound'
 import { IconRound } from '../components/pvp/IconRound'
@@ -139,12 +140,31 @@ function Scoreboard({ state }: { state: PvpState }) {
       </Stack>
 
       <Stack spacing={1}>
-        {state.players.map((p) => (
+        {state.players.map((p) => {
+          const token = p.avatar ? BY_ID.get(p.avatar) : null
+          return (
           <Box key={p.userId} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="body2" sx={{ fontWeight: p.isMe ? 700 : 400, minWidth: 0, flex: 1 }}>
-              {p.username}
-              {p.isMe && ' (you)'}
-            </Typography>
+            <Avatar
+              src={token ? `${import.meta.env.BASE_URL}tokens/${token.image}` : undefined}
+              sx={{ width: 32, height: 32, bgcolor: 'background.default', fontSize: 14 }}
+            >
+              {p.username[0]?.toUpperCase()}
+            </Avatar>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography
+                variant="body2"
+                noWrap
+                sx={{ fontWeight: p.isMe ? 700 : 400, lineHeight: 1.2 }}
+              >
+                {p.username}
+                {p.isMe && ' (you)'}
+              </Typography>
+              {(p.pronouns || p.isHost) && (
+                <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
+                  {[p.pronouns, p.isHost ? 'host' : null].filter(Boolean).join(' · ')}
+                </Typography>
+              )}
+            </Box>
             {state.status === 'lobby' && (
               <Chip size="small" color={p.ready ? 'success' : 'default'} label={p.ready ? 'Ready' : 'Not ready'} />
             )}
@@ -161,7 +181,8 @@ function Scoreboard({ state }: { state: PvpState }) {
               {Math.round(p.score)}
             </Typography>
           </Box>
-        ))}
+          )
+        })}
         {state.players.length < 2 && (
           <Typography variant="body2" color="text.secondary">
             Waiting for an opponent…
@@ -241,7 +262,7 @@ function Lobby({ state, pvp }: { state: PvpState; pvp: ReturnType<typeof usePvp>
             value={state.cycles}
             onChange={(e) => void pvp.configure(state.config, Number(e.target.value))}
             helperText="Each cycle is all three rounds"
-            sx={{ mb: 2, minWidth: 160 }}
+            sx={{ mb: 1.5, minWidth: 160 }}
           >
             {[1, 2, 3].map((n) => (
               <MenuItem key={n} value={n}>
@@ -249,11 +270,22 @@ function Lobby({ state, pvp }: { state: PvpState; pvp: ReturnType<typeof usePvp>
               </MenuItem>
             ))}
           </TextField>
+
+          <Box sx={{ mb: 2 }}>
+            <SettingsSummary state={state} />
+          </Box>
         </>
       ) : (
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          The host is choosing the settings.
-        </Typography>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Settings
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+            Chosen by {state.players.find((p) => p.isHost)?.username ?? 'the host'}. These update
+            live if they change them.
+          </Typography>
+          <SettingsSummary state={state} />
+        </Box>
       )}
 
       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }} useFlexGap>
@@ -276,6 +308,39 @@ function Lobby({ state, pvp }: { state: PvpState; pvp: ReturnType<typeof usePvp>
   )
 }
 
+/** What the match is actually set to, shown identically to both players. */
+function SettingsSummary({ state }: { state: PvpState }) {
+  const pools = [
+    state.config.base3 && 'Base 3',
+    state.config.experimental && 'Experimental',
+    state.config.travellers && 'Travellers',
+  ].filter(Boolean) as string[]
+
+  const pool = ALL_CHARACTERS.filter((c) => {
+    if (c.pools.isStoryteller) return false
+    if (c.pools.isTraveller) return state.config.travellers
+    if (c.pools.inBase3) return state.config.base3
+    if (c.pools.isExperimental) return state.config.experimental
+    return false
+  }).length
+
+  return (
+    <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }} useFlexGap>
+      {pools.length > 0 ? (
+        pools.map((p) => <Chip key={p} size="small" color="primary" variant="outlined" label={p} />)
+      ) : (
+        <Chip size="small" color="warning" variant="outlined" label="No sets chosen" />
+      )}
+      <Chip size="small" variant="outlined" label={`${pool} characters`} />
+      <Chip
+        size="small"
+        variant="outlined"
+        label={`${state.cycles} ${state.cycles === 1 ? 'cycle' : 'cycles'}, ${state.cycles * 3} rounds`}
+      />
+    </Stack>
+  )
+}
+
 function PickForOpponent({
   state,
   pvp,
@@ -286,6 +351,7 @@ function PickForOpponent({
   pool: Character[]
 }) {
   const opponent = state.players.find((p) => !p.isMe)
+  const opponentToken = opponent?.avatar ? BY_ID.get(opponent.avatar) : null
   const picked = state.round?.iHavePicked
 
   return (
@@ -293,9 +359,21 @@ function PickForOpponent({
       <Typography variant="overline" color="text.secondary">
         Round 3 · Set a character
       </Typography>
-      <Typography variant="h6" gutterBottom>
-        Choose the character {opponent?.username ?? 'your opponent'} has to find
-      </Typography>
+      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 0.5 }}>
+        {opponentToken && (
+          <Box
+            component="img"
+            src={`${import.meta.env.BASE_URL}tokens/${opponentToken.image}`}
+            alt=""
+            width={40}
+            height={40}
+            sx={{ width: 40, height: 40 }}
+          />
+        )}
+        <Typography variant="h6">
+          Choose the character {opponent?.username ?? 'your opponent'} has to find
+        </Typography>
+      </Stack>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         They are choosing one for you at the same time. The round starts once you have both picked.
       </Typography>

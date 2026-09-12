@@ -122,6 +122,50 @@ export function HelpDialog({ open, onClose }: { open: boolean; onClose: () => vo
         <Divider sx={{ my: 2 }} />
 
         <Typography variant="subtitle2" gutterBottom>
+          Your collection
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          Every character you name correctly is added to your collection, from any mode, and any
+          character in it can be used as your profile picture.
+        </Typography>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 1 }}>
+          <Box
+            sx={{
+              width: 34,
+              height: 34,
+              borderRadius: '50%',
+              border: '2px solid',
+              borderColor: 'primary.main',
+              boxShadow: '0 0 10px rgba(200,169,81,0.45)',
+              flexShrink: 0,
+            }}
+          />
+          <Typography variant="body2" color="text.secondary">
+            A gold ring means you earned that character the best way it can be earned: in a daily
+            for most, or in Endless for Fabled and Loric, which never appear in the dailies.
+          </Typography>
+        </Stack>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Endless and Versus wins on everyone else still unlock the character, just without the
+          ring. Characters you have not named yet show as dark silhouettes, so you can see what is
+          left.
+        </Typography>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Typography variant="subtitle2" gutterBottom>
+          Versus
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Two players, three rounds a cycle. Round one shows a token and the fastest correct name
+          scores most. Rounds two and three are the normal grid capped at eight guesses, scored on
+          how few guesses you used and how quickly, with speed carrying the larger share. Round
+          three lets you each choose the character the other has to find.
+        </Typography>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Typography variant="subtitle2" gutterBottom>
           Accessibility
         </Typography>
         <FormControlLabel

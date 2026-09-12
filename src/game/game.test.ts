@@ -259,7 +259,7 @@ describe('closeness', () => {
 describe('scoring', () => {
   it('pays the ceiling for instant recognition and the floor at the buzzer', () => {
     expect(scoreIconRound(0)).toBe(100)
-    expect(scoreIconRound(ICON_ROUND_MS - 1)).toBe(40)
+    expect(scoreIconRound(ICON_ROUND_MS - 1)).toBe(25)
   })
 
   it('pays nothing once the round has expired', () => {
@@ -278,17 +278,17 @@ describe('scoring', () => {
 
   it('pays most for a one-guess instant solve and least for a slow capped one', () => {
     expect(scoreGuessRound(1, true, 1, 0)).toBe(100)
-    expect(scoreGuessRound(PVP_GUESS_CAP, true, 1, 120_000)).toBe(50)
+    expect(scoreGuessRound(PVP_GUESS_CAP, true, 1, 120_000)).toBe(30)
   })
 
   it('treats an omitted elapsed time as no speed bonus', () => {
-    // 50 floor + 25 for a one-guess solve + 0 speed.
-    expect(scoreGuessRound(1, true, 1)).toBe(75)
+    // 30 floor + 25 for a one-guess solve + 0 speed.
+    expect(scoreGuessRound(1, true, 1)).toBe(55)
   })
 
   it('still pays the closest player when nobody solves, regardless of clock', () => {
-    expect(scoreGuessRound(8, false, 1, 0)).toBe(40)
-    expect(scoreGuessRound(8, false, 0.5, 0)).toBe(20)
+    expect(scoreGuessRound(8, false, 1, 0)).toBe(25)
+    expect(scoreGuessRound(8, false, 0.5, 0)).toBe(13)
     expect(scoreGuessRound(8, false, 0, 0)).toBe(0)
   })
 

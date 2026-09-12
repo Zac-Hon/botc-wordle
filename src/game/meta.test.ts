@@ -228,18 +228,27 @@ describe('pvp scoring weighs time', () => {
     )
   })
 
-  it('weighs speed and economy about equally', () => {
-    // Giving up all the speed bonus should cost about what giving up all the
-    // guess bonus costs. Neither dimension may quietly dominate.
-    const perfect = scoreGuessRound(1, true, 1, fast)
-    const slowButEfficient = scoreGuessRound(1, true, 1, slow)
-    const fastButWasteful = scoreGuessRound(PVP_GUESS_CAP, true, 1, fast)
-    expect(Math.abs((perfect - slowButEfficient) - (perfect - fastButWasteful))).toBeLessThanOrEqual(1)
+  it('tops out at 100 and bottoms out at 30 for a solve', () => {
+    expect(scoreGuessRound(1, true, 1, fast)).toBe(100)
+    expect(scoreGuessRound(PVP_GUESS_CAP, true, 1, slow)).toBe(30)
   })
 
-  it('tops out at 100 and bottoms out at 50 for a solve', () => {
-    expect(scoreGuessRound(1, true, 1, fast)).toBe(100)
-    expect(scoreGuessRound(PVP_GUESS_CAP, true, 1, slow)).toBe(50)
+  /**
+   * The complaint that prompted the reweight: individual seconds barely moved
+   * the score. Twenty seconds should now be worth roughly ten points, which is
+   * enough to decide a close round.
+   */
+  it('makes seconds matter', () => {
+    const at10 = scoreGuessRound(3, true, 1, 10_000)
+    const at30 = scoreGuessRound(3, true, 1, 30_000)
+    expect(at10 - at30).toBeGreaterThanOrEqual(9)
+  })
+
+  it('gives speed a larger share than economy', () => {
+    const perfect = scoreGuessRound(1, true, 1, fast)
+    const lostAllSpeed = perfect - scoreGuessRound(1, true, 1, slow)
+    const lostAllEconomy = perfect - scoreGuessRound(PVP_GUESS_CAP, true, 1, fast)
+    expect(lostAllSpeed).toBeGreaterThan(lostAllEconomy)
   })
 
   /**
@@ -267,9 +276,9 @@ describe('pvp scoring weighs time', () => {
     expect(scoreGuessRound(4, true, 1)).toBe(scoreGuessRound(4, true, 1, SPEED_REFERENCE_MS))
   })
 
-  it('still scores the icon round purely on speed', () => {
+  it('still scores the icon round purely on speed, over a wider range', () => {
     expect(scoreIconRound(0)).toBe(100)
-    expect(scoreIconRound(29_999)).toBe(40)
+    expect(scoreIconRound(29_999)).toBe(25)
     expect(scoreIconRound(30_000)).toBe(0)
   })
 })

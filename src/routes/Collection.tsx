@@ -86,7 +86,8 @@ export function Collection() {
       <Box>
         <Typography variant="h5">Collection</Typography>
         <Typography variant="body2" color="text.secondary">
-          Every character you have correctly named, from the dailies, Endless and Versus.
+          Every character you have correctly named, from the dailies, Endless and Versus. The help
+          button in the top bar explains what the gold rings mean.
         </Typography>
       </Box>
 
@@ -219,12 +220,6 @@ export function Collection() {
           </Accordion>
         )
       })}
-
-      <Typography variant="caption" color="text.secondary" align="center">
-        A gold ring means you earned that character the best way it can be earned: in a daily for
-        most, or in Endless for Fabled and Loric, which never appear in the dailies. Endless and
-        Versus wins on everyone else unlock the character without the ring.
-      </Typography>
 
     </Stack>
   )
