@@ -37,7 +37,7 @@ docs/          This file and GAME.md
 
 `src/game/` below the hooks is pure TypeScript with no React and no network:
 `compare`, `hangman`, `scoring`, `closeness`, `daily`, `random`, `stats`. That
-is what the 152 tests cover.
+is what the 156 tests cover.
 
 ## The governing rule: answers never reach the browser early
 
@@ -100,10 +100,17 @@ It **fails the build** rather than guessing if a character cannot be classified
 into a pool. That is deliberate: the failure mode it prevents is a mystery
 character silently appearing in Daily Classic.
 
-After running it, re-run the generated `seed/characters.sql` in Supabase. It
-clears `daily_puzzles` on the way through (foreign keys), so re-run
-`seed/dailies.sql` too. The schedule is deterministic, so already-played dates
-keep their answers and nobody's streak moves.
+After running it, re-run the generated `seed/characters.sql` in Supabase.
+Nothing else needs re-seeding: it upserts rather than replacing.
+
+It used to delete every character row and re-insert, which was fine while only
+`daily_puzzles` referenced them. Once real games existed it started failing on a
+foreign key from `pvp_round_answers`, and cascading the delete would have thrown
+away match history to refresh a name. It now upserts, and a character that has
+vanished from the official data is only removed when nothing references it;
+otherwise it is kept and reported. That check walks the foreign keys in
+`information_schema` rather than a hard-coded list, so a table added later is
+covered without anyone remembering to update the seed.
 
 ## Determinism
 

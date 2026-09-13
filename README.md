@@ -50,7 +50,7 @@ need a Supabase project, see [SETUP.md](SETUP.md).
 |---|---|
 | `npm run dev` | Dev server on :5173 |
 | `npm run build` | Production build into `dist/` |
-| `npm test` | 152 unit tests over the game engine |
+| `npm test` | 156 unit tests over the game engine |
 | `npm run build:data` | Re-fetch characters and token art from the official source |
 | `npm run build:dailies` | Regenerate the puzzle schedule |
 | `npm run analyse:clues` | Measure how well the current clue grid discriminates |
