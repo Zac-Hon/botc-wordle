@@ -12,6 +12,24 @@
 -- offer. The column keeps its name to avoid a rename across the codebase; this
 -- comment is the authority on what it means.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 11 then
+    raise exception 'Refusing to run 11_storyteller_tier.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 create or replace function public.record_collection(
   p_user uuid, p_character_id text, p_source text default 'daily'
 )
@@ -63,3 +81,6 @@ select count(*) as storytellers_missing_ring
 from public.user_collection uc
 join public.characters c on c.id = uc.character_id
 where (c.pools ->> 'isStoryteller')::bool and not uc.earned_daily;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (11) on conflict (n) do nothing;

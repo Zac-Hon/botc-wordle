@@ -86,8 +86,12 @@ export function useEndlessGame(pool: Character[], opts: EndlessPoolOptions, sign
 
   const hangman = useMemo(
     () =>
+      // Signed out, the browser already chose the answer, so there is nothing
+      // to withhold and revealHangman gates the reveal itself. Signed in, the
+      // name only arrives from the server once it has been earned. Either way
+      // the threshold lives in one place rather than being repeated here.
       revealHangman(
-        answerName ?? (localAnswer && wrongCount >= 4 ? localAnswer.name : '') ?? '',
+        answerName ?? localAnswer?.name ?? '',
         wrongCount,
         sessionId ?? localAnswer?.id ?? 'none',
       ),

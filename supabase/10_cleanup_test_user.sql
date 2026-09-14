@@ -7,6 +7,24 @@
 -- it. The explicit deletes below are belt and braces, and they also clean up
 -- anything a cascade would not reach, such as a match this user hosted.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 10 then
+    raise exception 'Refusing to run 10_cleanup_test_user.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 do $$
 declare
   v_user uuid;
@@ -55,3 +73,6 @@ select
 
 -- The summary table may hold a stale row for the deleted player; rebuild it.
 select public.rebuild_player_stats() as players_recalculated;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (10) on conflict (n) do nothing;

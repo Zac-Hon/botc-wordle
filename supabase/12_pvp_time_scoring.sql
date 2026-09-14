@@ -8,6 +8,24 @@
 -- Mirrors src/game/scoring.ts. scripts/verify-parity.ts checks the two agree
 -- across every combination, which is the only thing keeping them honest.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 12 then
+    raise exception 'Refusing to run 12_pvp_time_scoring.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 -- Gains an elapsed-time parameter, so the old signature has to go first.
 drop function if exists public.pvp_score_guesses(int, bool, numeric);
 drop function if exists public.pvp_score_guesses(int, bool, numeric, int);
@@ -204,3 +222,6 @@ $$;
 
 grant execute on function public.pvp_submit_guess(uuid, text) to authenticated;
 grant execute on function public.pvp_advance(uuid) to authenticated;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (12) on conflict (n) do nothing;

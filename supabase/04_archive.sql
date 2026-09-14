@@ -1,6 +1,24 @@
 -- BOTC Wordle -- archive listing. Run AFTER 03_policies.sql.
 -- Safe to re-run.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 4 then
+    raise exception 'Refusing to run 04_archive.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 -- Lists past puzzles together with how the caller did on each.
 --
 -- It returns dates and the caller's own results only -- never a character_id --
@@ -55,3 +73,6 @@ as $$
 $$;
 
 grant execute on function public.archive_list(text, int, date) to authenticated;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (4) on conflict (n) do nothing;

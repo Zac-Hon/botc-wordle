@@ -6,6 +6,24 @@
 -- rather than host-chosen, because a rating is only meaningful if everyone
 -- played the same game.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 14 then
+    raise exception 'Refusing to run 14_ranked_elo_queue.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 -- ===========================================================================
 -- 1. Ratings
 -- ===========================================================================
@@ -529,3 +547,6 @@ end;
 $$;
 
 grant execute on function public.pvp_state(uuid) to authenticated;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (14) on conflict (n) do nothing;

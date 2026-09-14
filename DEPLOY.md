@@ -85,8 +85,13 @@ SQL Editor, in filename order:
 | `13_pvp_time_weighting.sql` | Heavier time weighting, opponent pronouns in Versus |
 | `14_ranked_elo_queue.sql` | Ranked Versus: Elo ratings and the matchmaking queue |
 | `15_fix_ranked_start.sql` | Fixes ranked matches freezing before round one |
+| `16_parity_hooks.sql` | Exposes the spelling judge and scoring helpers for parity testing |
 
-All are re-runnable.
+All are re-runnable **in order**. Each one records itself and refuses to run
+if a higher-numbered file has already been applied, because later files
+replace functions from earlier ones: re-running `05_pvp.sql` today would
+silently revert time-weighted scoring, synchronised round starts and the
+ranked-start fix. Re-running the whole sequence is always safe.
 
 ## Before you share the link
 

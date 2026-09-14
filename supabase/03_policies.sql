@@ -7,6 +7,24 @@
 -- when. Verify after running this: a logged-in client calling
 -- .from('daily_puzzles').select('*') must return zero rows.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 3 then
+    raise exception 'Refusing to run 03_policies.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 alter table public.profiles          enable row level security;
 alter table public.characters        enable row level security;
 alter table public.clue_spec         enable row level security;
@@ -142,3 +160,6 @@ create policy pvp_rounds_read on public.pvp_rounds
 
 alter table public.pvp_round_answers enable row level security;
 -- Deliberately no policy: answers are mediated by the PvP RPCs only.
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (3) on conflict (n) do nothing;

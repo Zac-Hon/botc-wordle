@@ -12,6 +12,24 @@
 -- happened to do both. pvp_open_round now owns both, so no future caller can
 -- get this wrong again.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 15 then
+    raise exception 'Refusing to run 15_fix_ranked_start.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 create or replace function public.pvp_open_round(p_match uuid, p_cycle int, p_round int)
 returns void language plpgsql security definer set search_path = public as $$
 declare
@@ -151,3 +169,6 @@ where q.match_id = m.id and m.status in ('abandoned', 'finished');
 select count(*) as still_stuck
 from public.pvp_matches
 where status = 'active' and current_round = 0;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (15) on conflict (n) do nothing;

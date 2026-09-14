@@ -1,6 +1,24 @@
 -- BOTC Wordle: synchronised round starts and rematch.
 -- Run AFTER 07_endless_collection_tiers_stats.sql. Safe to re-run.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 8 then
+    raise exception 'Refusing to run 08_pvp_sync_rematch.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 -- ===========================================================================
 -- 1. Synchronised starts
 -- ===========================================================================
@@ -498,3 +516,6 @@ end;
 $$;
 
 grant execute on function public.pvp_state(uuid) to authenticated;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (8) on conflict (n) do nothing;

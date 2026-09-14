@@ -5,6 +5,24 @@
 -- client that can award its own points is a client that can cheat, and this is
 -- a head-to-head mode played between friends who will absolutely try.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 5 then
+    raise exception 'Refusing to run 05_pvp.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 -- Levenshtein, for judging near-miss spellings in the icon round.
 create extension if not exists fuzzystrmatch;
 
@@ -715,3 +733,6 @@ grant execute on function public.pvp_score_guesses(int, bool, numeric)     to an
 drop policy if exists pvp_participants_update_own on public.pvp_participants;
 create policy pvp_participants_update_own on public.pvp_participants
   for update to authenticated using (user_id = auth.uid());
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (5) on conflict (n) do nothing;

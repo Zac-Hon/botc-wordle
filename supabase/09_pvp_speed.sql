@@ -15,6 +15,24 @@
 -- The client fixes the second with a Realtime broadcast, which skips the
 -- database entirely and reaches the peer in a few milliseconds.
 
+-- Ordering guard: refuses to run if a later migration has already been
+-- applied, because that would revert whatever the later file replaced.
+create table if not exists public.schema_version (
+  n          int primary key,
+  applied_at timestamptz not null default now()
+);
+
+do $guard$
+declare v_max int;
+begin
+  select max(n) into v_max from public.schema_version;
+  if v_max is not null and v_max > 9 then
+    raise exception 'Refusing to run 09_pvp_speed.sql: migration % is already applied. Apply the numbered files in order, or not at all.', v_max;
+  end if;
+end
+$guard$;
+
+
 -- Return type changes from void to jsonb, so these must be dropped first.
 drop function if exists public.pvp_set_ready(uuid, bool);
 drop function if exists public.pvp_configure(uuid, jsonb, int);
@@ -144,3 +162,6 @@ end;
 $$;
 
 grant execute on function public.pvp_submit_guess_state(uuid, text) to authenticated;
+
+-- Records this file as applied, for the ordering guard at the top.
+insert into public.schema_version (n) values (9) on conflict (n) do nothing;

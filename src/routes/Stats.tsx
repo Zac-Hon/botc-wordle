@@ -366,7 +366,7 @@ function Everyone({ rows }: { rows: GlobalRow[] | null }) {
           title="Longest streak"
           player={longestStreak}
           value={longestStreak ? String(longestStreak.best_streak) : 'N/A'}
-          note="consecutive days"
+          note="consecutive days, either daily"
         />
       </Box>
 

@@ -203,8 +203,13 @@ The numbered files in `supabase/` are applied **by hand, in order**, in the
 Supabase SQL Editor. They are not part of the deploy: pushing ships the frontend
 only. That is deliberate, so a push can never silently migrate the database.
 
-All are re-runnable. Two gotchas, both of which fail at deploy time and are
-invisible to the tests:
+All are re-runnable **in order**. Nineteen functions are defined in more than
+one file because later files replace earlier definitions, so running an
+earlier file afterwards is silently destructive. Each file records itself in
+`schema_version` and refuses to run if a higher number is already applied.
+
+Two further gotchas, both of which fail at deploy time and are invisible to
+the tests:
 
 - `CREATE OR REPLACE FUNCTION` **cannot change a return type**. Add an explicit
   `DROP FUNCTION` first.

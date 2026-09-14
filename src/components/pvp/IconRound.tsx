@@ -11,6 +11,11 @@ import type { PvpRound } from '../../game/usePvp'
 
 type Verdict = { verdict: string; points?: number; answerName?: string } | null
 
+/** Wrong guesses allowed at full speed before the input is throttled. */
+const FREE_GUESSES = 5
+/** How long a throttled player waits between attempts. */
+const THROTTLE_MS = 1000
+
 /**
  * Round one: name the character from its token art, fastest scores most.
  *
@@ -45,11 +50,28 @@ export function IconRound({
     round.mySolved && round.myElapsedMs != null
       ? `${(round.myElapsedMs / 1000).toFixed(1)}s`
       : null
-  const rateLimited = wrongCount >= 5 && Date.now() - lastSubmit.current < 1000
+  // Held in state, not computed during render. Reading Date.now() and a ref
+  // while rendering meant nothing re-rendered when the second elapsed, so the
+  // warning stuck on screen and `submit` tested a stale value that could both
+  // block a legitimate guess and let a rapid one through.
+  const [throttled, setThrottled] = useState(false)
+
+  useEffect(() => {
+    if (!throttled) return
+    const t = setTimeout(() => setThrottled(false), THROTTLE_MS)
+    return () => clearTimeout(t)
+  }, [throttled])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!text.trim() || busy || done || rateLimited) return
+    // Checked at call time rather than from render state, so the decision is
+    // made against the real clock.
+    const since = Date.now() - lastSubmit.current
+    if (!text.trim() || busy || done) return
+    if (wrongCount >= FREE_GUESSES && since < THROTTLE_MS) {
+      setThrottled(true)
+      return
+    }
     setBusy(true)
     lastSubmit.current = Date.now()
 
@@ -138,7 +160,7 @@ export function IconRound({
         {feedback === 'wrong' && (
           <Typography sx={{ mt: 1.5, color: 'text.secondary' }}>Not that one.</Typography>
         )}
-        {rateLimited && (
+        {throttled && (
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
             Slow down a moment…
           </Typography>
