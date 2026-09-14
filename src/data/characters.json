@@ -10,7 +10,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 22,
       "tags": [
         "misinformation"
       ],
@@ -35,7 +35,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 52,
       "tags": [
         "killing",
         "information",
@@ -62,7 +62,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 14,
+      "nightOrder": 18,
       "tags": [
         "ability-granting",
         "self-targeting"
@@ -114,7 +114,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 48,
+      "nightOrder": 70,
       "tags": [
         "information"
       ],
@@ -164,7 +164,7 @@
       "team": "traveller",
       "script": "bmr",
       "wake": "first",
-      "nightOrder": 8,
+      "nightOrder": 11,
       "tags": [
         "ability-granting",
         "self-targeting"
@@ -215,7 +215,7 @@
       "team": "minion",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 57,
       "tags": [
         "killing"
       ],
@@ -267,7 +267,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 63,
+      "nightOrder": 87,
       "tags": [
         "information",
         "setup-modifier"
@@ -293,7 +293,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 65,
       "tags": [
         "killing",
         "voting-social"
@@ -319,7 +319,7 @@
       "team": "outsider",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 61,
       "tags": [
         "death-triggered"
       ],
@@ -344,7 +344,7 @@
       "team": "traveller",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 9,
+      "nightOrder": 5,
       "tags": [
         "protection",
         "ability-granting"
@@ -471,7 +471,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 12,
+      "nightOrder": 16,
       "tags": [
         "misinformation"
       ],
@@ -496,7 +496,7 @@
       "team": "traveller",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 9,
       "tags": [
         "ability-granting",
         "death-triggered"
@@ -573,7 +573,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 66,
+      "nightOrder": 90,
       "tags": [
         "information",
         "setup-modifier"
@@ -599,7 +599,7 @@
       "team": "fabled",
       "script": "fabled",
       "wake": "first",
-      "nightOrder": 2,
+      "nightOrder": 3,
       "tags": [
         "rules-modifier"
       ],
@@ -624,7 +624,7 @@
       "team": "traveller",
       "script": "tb",
       "wake": "both",
-      "nightOrder": 10,
+      "nightOrder": 6,
       "tags": [
         "voting-social"
       ],
@@ -674,7 +674,7 @@
       "team": "outsider",
       "script": "tb",
       "wake": "both",
-      "nightOrder": 55,
+      "nightOrder": 93,
       "tags": [
         "voting-social"
       ],
@@ -699,7 +699,7 @@
       "team": "traveller",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 4,
       "tags": [
         "ability-granting"
       ],
@@ -751,7 +751,7 @@
       "team": "minion",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 40,
+      "nightOrder": 28,
       "tags": [
         "misinformation",
         "voting-social"
@@ -777,7 +777,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 73,
+      "nightOrder": 97,
       "tags": [
         "information"
       ],
@@ -802,7 +802,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "first",
-      "nightOrder": 52,
+      "nightOrder": 68,
       "tags": [
         "information"
       ],
@@ -827,7 +827,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 67,
       "tags": [
         "information",
         "killing",
@@ -854,7 +854,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "first",
-      "nightOrder": 57,
+      "nightOrder": 75,
       "tags": [
         "information"
       ],
@@ -879,7 +879,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 32,
+      "nightOrder": 18,
       "tags": [
         "misinformation"
       ],
@@ -904,7 +904,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 68,
+      "nightOrder": 92,
       "tags": [
         "self-targeting"
       ],
@@ -929,7 +929,7 @@
       "team": "outsider",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 47,
+      "nightOrder": 69,
       "tags": [
         "information",
         "voting-social"
@@ -1005,7 +1005,7 @@
       "team": "minion",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 37,
+      "nightOrder": 26,
       "tags": [
         "protection",
         "voting-social"
@@ -1081,7 +1081,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 58,
+      "nightOrder": 80,
       "tags": [
         "information"
       ],
@@ -1133,7 +1133,7 @@
       "team": "fabled",
       "script": "fabled",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 1,
       "tags": [
         "rules-modifier"
       ],
@@ -1158,7 +1158,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "both",
-      "nightOrder": 53,
+      "nightOrder": 77,
       "tags": [
         "information"
       ],
@@ -1183,7 +1183,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 25,
+      "nightOrder": 13,
       "tags": [
         "ability-granting",
         "information"
@@ -1209,7 +1209,7 @@
       "team": "minion",
       "script": "snv",
       "wake": "first",
-      "nightOrder": 38,
+      "nightOrder": 50,
       "tags": [
         "voting-social"
       ],
@@ -1234,7 +1234,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 36,
       "tags": [
         "protection",
         "information"
@@ -1260,7 +1260,7 @@
       "team": "demon",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 45,
       "tags": [
         "killing",
         "ability-granting",
@@ -1287,7 +1287,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 71,
       "tags": [
         "death-triggered"
       ],
@@ -1312,7 +1312,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 41,
+      "nightOrder": 30,
       "tags": [
         "voting-social"
       ],
@@ -1437,7 +1437,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 81,
       "tags": [
         "information"
       ],
@@ -1488,7 +1488,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "both",
-      "nightOrder": 54,
+      "nightOrder": 78,
       "tags": [
         "information",
         "misinformation"
@@ -1514,7 +1514,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 21,
       "tags": [
         "misinformation"
       ],
@@ -1589,7 +1589,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 72,
+      "nightOrder": 96,
       "tags": [
         "information"
       ],
@@ -1690,7 +1690,7 @@
       "team": "minion",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 35,
+      "nightOrder": 58,
       "tags": [
         "information",
         "killing",
@@ -1769,7 +1769,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 59,
       "tags": [
         "killing",
         "voting-social"
@@ -1795,7 +1795,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 56,
+      "nightOrder": 74,
       "tags": [
         "information",
         "killing"
@@ -1847,7 +1847,7 @@
       "team": "traveller",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 8,
       "tags": [
         "information"
       ],
@@ -1872,7 +1872,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 42,
+      "nightOrder": 31,
       "tags": [
         "misinformation"
       ],
@@ -1897,7 +1897,7 @@
       "team": "outsider",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 60,
       "tags": [
         "death-triggered"
       ],
@@ -1998,7 +1998,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 71,
+      "nightOrder": 95,
       "tags": [
         "information"
       ],
@@ -2048,7 +2048,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 46,
+      "nightOrder": 68,
       "tags": [
         "ability-granting",
         "setup-modifier"
@@ -2074,7 +2074,7 @@
       "team": "demon",
       "script": "tb",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 40,
       "tags": [
         "killing",
         "self-targeting"
@@ -2100,7 +2100,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 19,
       "tags": [
         "protection",
         "killing",
@@ -2127,7 +2127,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "first",
-      "nightOrder": 51,
+      "nightOrder": 67,
       "tags": [
         "information"
       ],
@@ -2177,7 +2177,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 86,
       "tags": [
         "information"
       ],
@@ -2202,7 +2202,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 7,
+      "nightOrder": 56,
       "tags": [
         "killing",
         "setup-modifier"
@@ -2228,7 +2228,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 22,
+      "nightOrder": 89,
       "tags": [
         "information",
         "self-targeting"
@@ -2304,7 +2304,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 61,
+      "nightOrder": 80,
       "tags": [
         "information"
       ],
@@ -2329,7 +2329,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 39,
       "tags": [
         "misinformation",
         "setup-modifier"
@@ -2355,7 +2355,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 75,
+      "nightOrder": 100,
       "tags": [
         "voting-social"
       ],
@@ -2380,7 +2380,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "first",
-      "nightOrder": 50,
+      "nightOrder": 66,
       "tags": [
         "information"
       ],
@@ -2405,7 +2405,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 27,
+      "nightOrder": 54,
       "tags": [
         "setup-modifier"
       ],
@@ -2430,7 +2430,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 28,
+      "nightOrder": 53,
       "tags": [
         "killing",
         "misinformation"
@@ -2456,7 +2456,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 6,
+      "nightOrder": 48,
       "tags": [
         "killing",
         "setup-modifier"
@@ -2482,7 +2482,7 @@
       "team": "outsider",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 20,
+      "nightOrder": 35,
       "tags": [
         "self-targeting"
       ],
@@ -2507,7 +2507,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 37,
       "tags": [
         "killing",
         "misinformation"
@@ -2533,7 +2533,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 17,
+      "nightOrder": 22,
       "tags": [
         "self-targeting"
       ],
@@ -2558,7 +2558,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 24,
+      "nightOrder": 32,
       "tags": [
         "self-targeting",
         "setup-modifier"
@@ -2609,7 +2609,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 74,
+      "nightOrder": 98,
       "tags": [
         "information"
       ],
@@ -2685,7 +2685,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 43,
+      "nightOrder": 32,
       "tags": [
         "information"
       ],
@@ -2736,7 +2736,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 24,
       "tags": [
         "protection"
       ],
@@ -2761,7 +2761,7 @@
       "team": "outsider",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 73,
       "tags": [
         "information",
         "killing"
@@ -2813,7 +2813,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 67,
+      "nightOrder": 91,
       "tags": [
         "self-targeting"
       ],
@@ -2838,7 +2838,7 @@
       "team": "demon",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 46,
       "tags": [
         "killing",
         "misinformation"
@@ -2864,7 +2864,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 62,
+      "nightOrder": 82,
       "tags": [
         "information"
       ],
@@ -2889,7 +2889,7 @@
       "team": "outsider",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 70,
+      "nightOrder": 92,
       "tags": [
         "misinformation",
         "self-targeting"
@@ -2915,7 +2915,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 51,
       "tags": [
         "killing"
       ],
@@ -2940,7 +2940,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 84,
       "tags": [
         "information"
       ],
@@ -2965,7 +2965,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 36,
+      "nightOrder": 25,
       "tags": [
         "misinformation",
         "voting-social"
@@ -3016,7 +3016,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 13,
+      "nightOrder": 10,
       "tags": [
         "misinformation"
       ],
@@ -3041,7 +3041,7 @@
       "team": "minion",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 29,
       "tags": [
         "ability-granting"
       ],
@@ -3066,7 +3066,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 45,
+      "nightOrder": 59,
       "tags": [
         "information",
         "killing",
@@ -3094,7 +3094,7 @@
       "team": "outsider",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 63,
       "tags": [
         "death-triggered"
       ],
@@ -3119,7 +3119,7 @@
       "team": "demon",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 44,
       "tags": [
         "killing"
       ],
@@ -3144,7 +3144,7 @@
       "team": "minion",
       "script": "tb",
       "wake": "both",
-      "nightOrder": 30,
+      "nightOrder": 16,
       "tags": [
         "misinformation"
       ],
@@ -3219,7 +3219,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 15,
+      "nightOrder": 11,
       "tags": [
         "death-triggered"
       ],
@@ -3244,7 +3244,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 26,
+      "nightOrder": 14,
       "tags": [
         "protection",
         "information"
@@ -3270,7 +3270,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 38,
       "tags": [
         "killing",
         "voting-social"
@@ -3296,7 +3296,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 66,
       "tags": [
         "protection",
         "ability-granting",
@@ -3349,7 +3349,7 @@
       "team": "demon",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 44,
+      "nightOrder": 42,
       "tags": [
         "misinformation"
       ],
@@ -3400,7 +3400,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 76,
       "tags": [
         "information",
         "death-triggered"
@@ -3476,7 +3476,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 99,
       "tags": [
         "voting-social"
       ],
@@ -3501,7 +3501,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 64,
       "tags": [
         "information",
         "killing"
@@ -3527,7 +3527,7 @@
       "team": "townsfolk",
       "script": "bmr",
       "wake": "both",
-      "nightOrder": 23,
+      "nightOrder": 12,
       "tags": [
         "protection",
         "misinformation"
@@ -3629,7 +3629,7 @@
       "team": "minion",
       "script": "tb",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 33,
       "tags": [
         "ability-granting",
         "self-targeting"
@@ -3655,7 +3655,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 59,
+      "nightOrder": 85,
       "tags": [
         "information"
       ],
@@ -3705,7 +3705,7 @@
       "team": "demon",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 43,
       "tags": [
         "killing"
       ],
@@ -3730,7 +3730,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 64,
+      "nightOrder": 84,
       "tags": [
         "information"
       ],
@@ -3780,7 +3780,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 34,
+      "nightOrder": 23,
       "tags": [
         "misinformation"
       ],
@@ -3805,7 +3805,7 @@
       "team": "outsider",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 19,
+      "nightOrder": 25,
       "tags": [
         "misinformation"
       ],
@@ -3880,7 +3880,7 @@
       "team": "minion",
       "script": "tb",
       "wake": "both",
-      "nightOrder": 69,
+      "nightOrder": 94,
       "tags": [
         "information",
         "misinformation"
@@ -3906,7 +3906,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 60,
+      "nightOrder": 79,
       "tags": [
         "information"
       ],
@@ -3931,7 +3931,7 @@
       "team": "loric",
       "script": "loric",
       "wake": "first",
-      "nightOrder": 4,
+      "nightOrder": 5,
       "tags": [
         "rules-modifier"
       ],
@@ -3956,7 +3956,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 21,
+      "nightOrder": 34,
       "tags": [
         "ability-granting",
         "setup-modifier"
@@ -3982,7 +3982,7 @@
       "team": "outsider",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 62,
       "tags": [
         "misinformation",
         "death-triggered"
@@ -4033,7 +4033,7 @@
       "team": "traveller",
       "script": "tb",
       "wake": "both",
-      "nightOrder": 11,
+      "nightOrder": 7,
       "tags": [
         "voting-social"
       ],
@@ -4058,7 +4058,7 @@
       "team": "outsider",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 72,
       "tags": [
         "death-triggered",
         "self-targeting"
@@ -4084,7 +4084,7 @@
       "team": "loric",
       "script": "loric",
       "wake": "both",
-      "nightOrder": 18,
+      "nightOrder": 75,
       "tags": [
         "rules-modifier"
       ],
@@ -4109,7 +4109,7 @@
       "team": "townsfolk",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 82,
       "tags": [
         "information",
         "voting-social"
@@ -4135,7 +4135,7 @@
       "team": "fabled",
       "script": "fabled",
       "wake": "both",
-      "nightOrder": 3,
+      "nightOrder": 2,
       "tags": [
         "rules-modifier"
       ],
@@ -4160,7 +4160,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 79,
       "tags": [
         "information",
         "voting-social"
@@ -4211,7 +4211,7 @@
       "team": "demon",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 49,
       "tags": [
         "killing",
         "misinformation",
@@ -4238,7 +4238,7 @@
       "team": "townsfolk",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 65,
+      "nightOrder": 88,
       "tags": [
         "information",
         "misinformation",
@@ -4290,7 +4290,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 76,
+      "nightOrder": 100,
       "tags": [
         "protection",
         "voting-social",
@@ -4317,7 +4317,7 @@
       "team": "demon",
       "script": "snv",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 47,
       "tags": [
         "killing",
         "misinformation",
@@ -4369,7 +4369,7 @@
       "team": "townsfolk",
       "script": "tb",
       "wake": "first",
-      "nightOrder": 49,
+      "nightOrder": 64,
       "tags": [
         "information"
       ],
@@ -4394,7 +4394,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "first",
-      "nightOrder": 31,
+      "nightOrder": 41,
       "tags": [
         "misinformation"
       ],
@@ -4419,7 +4419,7 @@
       "team": "minion",
       "script": "snv",
       "wake": "both",
-      "nightOrder": 39,
+      "nightOrder": 27,
       "tags": [
         "killing",
         "voting-social"
@@ -4445,7 +4445,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 33,
+      "nightOrder": 20,
       "tags": [
         "ability-granting"
       ],
@@ -4470,7 +4470,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 5,
+      "nightOrder": 3,
       "tags": [
         "information",
         "self-targeting"
@@ -4496,7 +4496,7 @@
       "team": "minion",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 29,
+      "nightOrder": 15,
       "tags": [
         "misinformation",
         "setup-modifier"
@@ -4522,7 +4522,7 @@
       "team": "demon",
       "script": "experimental",
       "wake": "both",
-      "nightOrder": 16,
+      "nightOrder": 55,
       "tags": [
         "information"
       ],
@@ -4597,7 +4597,7 @@
       "team": "demon",
       "script": "bmr",
       "wake": "other",
-      "nightOrder": null,
+      "nightOrder": 41,
       "tags": [
         "killing",
         "misinformation"

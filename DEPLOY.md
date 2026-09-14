@@ -91,7 +91,7 @@ All are re-runnable.
 ## Before you share the link
 
 ```bash
-npm test              # 156 tests
+npm test              # 158 tests
 npm run verify:parity # TypeScript and Postgres agree on every clue and score
 npm run build         # must succeed
 ```

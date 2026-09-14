@@ -13,7 +13,7 @@ Every guess produces seven cells.
 | **Type** | Same type | Different type, same side | Different side |
 | **Script** | Same set | | Different set |
 | **Wakes** | Same night behaviour | | Different |
-| **Night order** | Same position, or neither wakes | Within 3, with an arrow | Further, with an arrow |
+| **Night order** | Same position, or neither wakes | Within 5, with an arrow | Further, with an arrow |
 | **Ability** | Identical tag set | At least one shared tag | Nothing shared |
 | **Reminders** | Same count | Within 1, with an arrow | Further, with an arrow |
 | **Jinxes** | Same count | Within 1, with an arrow | Further, with an arrow |
@@ -29,8 +29,8 @@ reports how much each one narrows the field. Leave-one-out cost against the
 87-character Classic pool, higher meaning more useful:
 
 ```
-reminders 1.57 | jinxes 1.01 | team 0.97 | script 0.94
-tags 0.61 | nightOrder 0.52 | wake 0.32
+reminders 1.49 | jinxes 1.10 | script 0.95 | team 0.87
+tags 0.56 | nightOrder 0.55 | wake 0.25
 ```
 
 (`setup` measured 0.06 on the same scale before it was removed.)
@@ -42,10 +42,27 @@ pool essentially untouched. It was cut and **jinxes** put in its place. The
 intuitive part of it survives as the `setup-modifier` ability tag, where it sits
 alongside other signals instead of wasting a column.
 
-Together the seven narrow 87 candidates to 2.15 after a single guess under
+Together the seven narrow 87 candidates to 2.13 after a single guess under
 perfect play. That sounds brutal, but perfect play assumes a memorised table of
 reminder-token and jinx counts. Nobody has that, and the columns people actually
 reason from are the weaker ones, which is what keeps the game playable.
+
+### Night order
+
+A number from 1 (earliest in the night) to 100 (latest), or N/A for the 61
+characters that never wake at all.
+
+It is normalised rather than a raw sheet position because there are two night
+sheets of different lengths, 76 entries on the first night and 97 on the others,
+and the number has to mean the same thing whichever sheet a character came from.
+The other-night sheet is preferred, since that is the order that repeats every
+night; only the 23 characters that act solely on the first night fall back to
+it. The two orders correlate at 0.79 across the 53 characters on both, so "how
+far through the night" survives the conversion.
+
+This column originally read the first-night sheet alone, which meant the 44
+characters that wake only on later nights, the Oracle among them, showed N/A as
+though they never woke.
 
 ### The Ability column
 

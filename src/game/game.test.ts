@@ -69,9 +69,9 @@ describe('compare', () => {
     it('partially matches inside the tolerance and misses outside it', () => {
       expect(cell(compare(attrs({ reminders: 2 }), attrs({ reminders: 3 })), 'reminders').result).toBe('partial')
       expect(cell(compare(attrs({ reminders: 0 }), attrs({ reminders: 4 })), 'reminders').result).toBe('miss')
-      // nightOrder has a wider tolerance of 3
-      expect(cell(compare(attrs({ nightOrder: 10 }), attrs({ nightOrder: 13 })), 'nightOrder').result).toBe('partial')
-      expect(cell(compare(attrs({ nightOrder: 10 }), attrs({ nightOrder: 14 })), 'nightOrder').result).toBe('miss')
+      // nightOrder runs on a 1-100 scale, so its tolerance is a wider 5
+      expect(cell(compare(attrs({ nightOrder: 10 }), attrs({ nightOrder: 15 })), 'nightOrder').result).toBe('partial')
+      expect(cell(compare(attrs({ nightOrder: 10 }), attrs({ nightOrder: 16 })), 'nightOrder').result).toBe('miss')
     })
 
     it('treats two non-waking characters as a match but gives no arrow', () => {
@@ -414,10 +414,35 @@ describe('character data', () => {
     expect(untagged.map((c) => c.name)).toEqual([])
   })
 
-  it('agrees between wake and nightOrder', () => {
+  /**
+   * Every character who wakes at all has a position, on either night sheet.
+   * This once only consulted the first-night sheet, so the 44 characters who
+   * act solely on later nights reported no order and the grid showed them as
+   * N/A. The Oracle, which wakes every night after the first, was the example
+   * that surfaced it.
+   */
+  it('gives a night order to every character that wakes, and none that do not', () => {
     for (const c of ALL_CHARACTERS) {
-      const wakesFirst = c.attrs.wake === 'first' || c.attrs.wake === 'both'
-      expect(c.attrs.nightOrder !== null, `${c.name} wake=${c.attrs.wake}`).toBe(wakesFirst)
+      const wakes = c.attrs.wake !== 'never'
+      expect(c.attrs.nightOrder !== null, `${c.name} wake=${c.attrs.wake}`).toBe(wakes)
     }
+  })
+
+  it('keeps night order on a comparable 1 to 100 scale', () => {
+    // Two sheets of different lengths feed this column, so a raw position would
+    // mean different things depending on which sheet a character came from.
+    for (const c of ALL_CHARACTERS) {
+      if (c.attrs.nightOrder === null) continue
+      expect(Number.isInteger(c.attrs.nightOrder), c.name).toBe(true)
+      expect(c.attrs.nightOrder, c.name).toBeGreaterThanOrEqual(1)
+      expect(c.attrs.nightOrder, c.name).toBeLessThanOrEqual(100)
+    }
+  })
+
+  it('places the Oracle late in the night rather than nowhere', () => {
+    const oracle = ALL_CHARACTERS.find((c) => c.id === 'oracle')
+    expect(oracle?.attrs.wake).toBe('other')
+    expect(oracle?.attrs.nightOrder).not.toBeNull()
+    expect(oracle?.attrs.nightOrder).toBeGreaterThan(50)
   })
 })

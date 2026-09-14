@@ -38,7 +38,7 @@ export interface CharacterAttrs {
   team: Team
   script: Script
   wake: Wake
-  /** 1-based position on the first night sheet; null when they never wake night 1. */
+  /** Position through the night, 1 (earliest) to 100 (latest); null if they never wake. */
   nightOrder: number | null
   tags: AbilityTag[]
   /** Reminder tokens, character-specific plus global. */

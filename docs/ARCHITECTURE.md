@@ -37,7 +37,7 @@ docs/          This file and GAME.md
 
 `src/game/` below the hooks is pure TypeScript with no React and no network:
 `compare`, `hangman`, `scoring`, `closeness`, `daily`, `random`, `stats`. That
-is what the 156 tests cover.
+is what the 158 tests cover.
 
 ## The governing rule: answers never reach the browser early
 
@@ -99,6 +99,12 @@ them, downloads all 181 token images, derives the attributes, applies
 It **fails the build** rather than guessing if a character cannot be classified
 into a pool. That is deliberate: the failure mode it prevents is a mystery
 character silently appearing in Daily Classic.
+
+`npm run audit:data` goes further: it re-derives every attribute independently
+and compares. Two data faults had already shipped past the build (ability tags
+inverted by "(not yourself)", and every character waking only on later nights
+reporting no night order), because neither looked wrong in the build output.
+Run it after any change to the pipeline or the tag rules.
 
 After running it, re-run the generated `seed/characters.sql` in Supabase.
 Nothing else needs re-seeding: it upserts rather than replacing.

@@ -14,7 +14,8 @@
     "analyse:clues": "tsx scripts/analyse-clues.ts",
     "build:dailies": "tsx scripts/seed-dailies.ts",
     "verify:parity": "tsx --env-file=.env scripts/verify-parity.ts",
-    "verify:data": "vitest run src/game/game.test.ts"
+    "verify:data": "vitest run src/game/game.test.ts",
+    "audit:data": "tsx scripts/audit-data.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

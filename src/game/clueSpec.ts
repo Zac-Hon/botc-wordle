@@ -72,7 +72,10 @@ export const CLUE_SPEC: readonly ClueColumn[] = [
     label: 'Night order',
     shortLabel: 'Order',
     kind: 'numeric',
-    tolerance: 3,
+    // The scale is now 1-100 rather than a raw sheet position, so the amber
+    // band widens to match: 5 points is about the same slice of the night that
+    // 3 raw positions used to be.
+    tolerance: 5,
     nullable: true,
   },
   { key: 'tags', label: 'Ability', shortLabel: 'Ability', kind: 'set' },

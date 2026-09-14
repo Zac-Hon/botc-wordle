@@ -123,14 +123,42 @@ async function mapLimit<T, R>(items: T[], limit: number, fn: (item: T) => Promis
   return out
 }
 
+/**
+ * Positions on one night sheet, normalised to 1-100.
+ *
+ * Normalised rather than raw because there are two sheets of different lengths
+ * (76 entries on the first night, 97 on the others) and a character's number
+ * has to mean the same thing whichever sheet it came from. The two orders are
+ * strongly correlated (0.79 across the 53 characters on both), so "how far
+ * through the night do they act" survives the conversion intact.
+ */
 function buildNightOrder(sheet: string[]): Map<string, number> {
+  const real = sheet.filter((id) => !NIGHT_META.has(id))
   const order = new Map<string, number>()
-  let position = 0
-  for (const id of sheet) {
-    if (NIGHT_META.has(id)) continue
-    order.set(id, ++position)
-  }
+  real.forEach((id, i) => {
+    order.set(id, Math.max(1, Math.round(((i + 1) / real.length) * 100)))
+  })
   return order
+}
+
+/**
+ * A character's night position, or null if they never wake.
+ *
+ * Prefers the other-night sheet, which is the order that repeats every night
+ * and therefore the one players actually internalise. Only the 23 characters
+ * that act solely on the first night fall back to it.
+ *
+ * This used to read the first-night sheet alone, which meant the 44 characters
+ * that wake only on later nights showed "N/A" despite having a perfectly real
+ * position. The Oracle, 84% of the way through every night, was reported as
+ * never waking at all.
+ */
+function deriveNightOrder(
+  id: string,
+  first: Map<string, number>,
+  other: Map<string, number>,
+): number | null {
+  return other.get(id) ?? first.get(id) ?? null
 }
 
 function deriveWake(id: string, first: Map<string, number>, other: Map<string, number>): Wake {
@@ -215,7 +243,7 @@ async function main() {
       // and Ferryman are team "fabled" but ship in the carousel edition.
       script: isStoryteller ? (role.team as Script) : (script ?? 'experimental'),
       wake: deriveWake(role.id, firstOrder, otherOrder),
-      nightOrder: firstOrder.get(role.id) ?? null,
+      nightOrder: deriveNightOrder(role.id, firstOrder, otherOrder),
       tags,
       reminders: (role.reminders?.length ?? 0) + (role.remindersGlobal?.length ?? 0),
       jinxes: jinxCounts.get(role.id) ?? 0,
@@ -342,7 +370,9 @@ async function writeSeed(characters: Character[]) {
   lines.push(
     characters
       .map((c) => `  ('${c.id}', '${c.name.replace(/'/g, "''")}', ${lit(c.attrs)}::jsonb, ${lit(c.pools)}::jsonb)`)
-      .join(',' + NL) + ';',
+      // No semicolon: the ON CONFLICT clause below is part of this statement.
+      // Terminating here produced "syntax error at or near on".
+      .join(',' + NL),
   )
 
   lines.push(

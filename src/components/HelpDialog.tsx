@@ -56,7 +56,7 @@ const COLUMN_HELP: Record<string, string> = {
     'Which set the character comes from: Trouble Brewing, Bad Moon Rising, Sects & Violets, or Experimental. Green or grey only, there is no partial match.',
   wake: 'When they act at night: never, first night only, other nights only, or both.',
   nightOrder:
-    'Their position in the first night order. The arrow points towards the answer, so up means the answer wakes later than your guess. N/A means they do not wake on the first night at all, and two characters who both never wake count as a match.',
+    'How far through the night they act, from 1 (earliest) to 100 (latest). The arrow points towards the answer, so up means the answer acts later than your guess. N/A means they never wake at all, and two characters who both never wake count as a match.',
   tags: 'What kind of ability they have. This compares a whole set, so green needs an exact match on every tag and amber means you share at least one. Amber is common here, green is rare.',
   reminders:
     'How many reminder tokens the character uses. A rough proxy for how fiddly they are. The arrow points towards the answer.',
