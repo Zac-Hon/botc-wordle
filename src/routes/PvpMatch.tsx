@@ -15,6 +15,8 @@ import Typography from '@mui/material/Typography'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
 import { ALL_CHARACTERS, BY_ID } from '../data/pools'
+import { frameSx } from '../game/frames'
+import { tokenSrc } from '../lib/tokens'
 import { GuessInput } from '../components/GuessInput'
 import { DeductionRound } from '../components/pvp/DeductionRound'
 import { IconRound } from '../components/pvp/IconRound'
@@ -145,33 +147,48 @@ function Scoreboard({ state }: { state: PvpState }) {
 
       <Stack spacing={1}>
         {state.players.map((p) => {
-          const token = p.avatar ? BY_ID.get(p.avatar) : null
+          // This row carries more than a PlayerChip does (the ready state, the
+          // running score, and marking which one is you), so it uses the same
+          // primitives rather than the component.
+          const caption = [
+            p.title,
+            p.pronouns,
+            state.ranked && p.rating !== null ? `${p.rating}` : null,
+            !state.ranked && p.isHost ? 'host' : null,
+          ].filter(Boolean)
           return (
           <Box key={p.userId} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar
-              src={token ? `${import.meta.env.BASE_URL}tokens/${token.image}` : undefined}
-              sx={{ width: 32, height: 32, bgcolor: 'background.default', fontSize: 14 }}
+            <Box
+              sx={{ ...frameSx(p.frame), borderRadius: '50%', p: '2px', display: 'inline-flex' }}
             >
-              {p.username[0]?.toUpperCase()}
-            </Avatar>
+              <Avatar
+                src={tokenSrc(p.avatar)}
+                sx={{ width: 32, height: 32, bgcolor: 'background.default', fontSize: 14 }}
+              >
+                {p.username[0]?.toUpperCase()}
+              </Avatar>
+            </Box>
             <Box sx={{ minWidth: 0, flex: 1 }}>
               <Typography
                 variant="body2"
                 noWrap
-                sx={{ fontWeight: p.isMe ? 700 : 400, lineHeight: 1.2 }}
+                component={RouterLink}
+                to={`/player/${encodeURIComponent(p.username)}`}
+                sx={{
+                  fontWeight: p.isMe ? 700 : 400,
+                  lineHeight: 1.2,
+                  color: 'inherit',
+                  textDecoration: 'none',
+                  '&:hover': { textDecoration: 'underline' },
+                  display: 'block',
+                }}
               >
                 {p.username}
                 {p.isMe && ' (you)'}
               </Typography>
-              {(p.pronouns || p.isHost || (state.ranked && p.rating !== null)) && (
+              {caption.length > 0 && (
                 <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
-                  {[
-                    p.pronouns,
-                    state.ranked && p.rating !== null ? `${p.rating}` : null,
-                    !state.ranked && p.isHost ? 'host' : null,
-                  ]
-                    .filter(Boolean)
-                    .join(' · ')}
+                  {caption.join(' · ')}
                 </Typography>
               )}
             </Box>
@@ -373,7 +390,7 @@ function PickForOpponent({
         {opponentToken && (
           <Box
             component="img"
-            src={`${import.meta.env.BASE_URL}tokens/${opponentToken.image}`}
+            src={tokenSrc(opponentToken)}
             alt=""
             width={40}
             height={40}

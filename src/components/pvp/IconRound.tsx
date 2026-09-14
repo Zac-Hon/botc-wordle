@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { RoundTimer } from './RoundTimer'
 import type { PvpRound } from '../../game/usePvp'
+import { tokenSrcFromFile } from '../../lib/tokens'
 
 type Verdict = { verdict: string; points?: number; answerName?: string } | null
 
@@ -105,7 +106,7 @@ export function IconRound({
         {round.iconImage && (
           <Box
             component="img"
-            src={`${import.meta.env.BASE_URL}tokens/${round.iconImage}`}
+            src={tokenSrcFromFile(round.iconImage)}
             alt="Character token"
             sx={{
               width: { xs: 130, sm: 180 },

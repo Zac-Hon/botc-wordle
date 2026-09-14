@@ -42,6 +42,12 @@ const Collection = lazy(() =>
   import('./routes/Collection').then((m) => ({ default: m.Collection })),
 )
 const Profile = lazy(() => import('./routes/Profile').then((m) => ({ default: m.Profile })))
+const PlayerProfile = lazy(() =>
+  import('./routes/PlayerProfile').then((m) => ({ default: m.PlayerProfile })),
+)
+const Achievements = lazy(() =>
+  import('./routes/Achievements').then((m) => ({ default: m.Achievements })),
+)
 const Pvp = lazy(() => import('./routes/Pvp').then((m) => ({ default: m.Pvp })))
 const PvpMatch = lazy(() => import('./routes/PvpMatch').then((m) => ({ default: m.PvpMatch })))
 
@@ -132,6 +138,8 @@ export default function App() {
             <Route path="/signup" element={<SignIn mode="up" />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/player/:username" element={<PlayerProfile />} />
+            <Route path="/achievements" element={<Achievements />} />
             <Route path="/collection" element={<Collection />} />
             <Route path="/archive" element={<Archive />} />
             <Route path="/archive/:mode/:date" element={<ArchivePlay />} />

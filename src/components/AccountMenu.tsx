@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
@@ -11,7 +13,10 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import PersonIcon from '@mui/icons-material/Person'
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark'
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { frameSx } from '../game/frames'
+import { tokenSrc } from '../lib/tokens'
 import { useAuth } from '../store/auth'
 
 /**
@@ -19,7 +24,7 @@ import { useAuth } from '../store/auth'
  * a single click that ends the session is far too easy to trigger by accident.
  */
 export function AccountMenu({ compact = false }: { compact?: boolean }) {
-  const { user, username, signOut, loading } = useAuth()
+  const { user, username, avatar, frame, signOut, loading } = useAuth()
   const [anchor, setAnchor] = useState<null | HTMLElement>(null)
   const navigate = useNavigate()
 
@@ -39,6 +44,30 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
 
   const close = () => setAnchor(null)
 
+  /**
+   * The token you earned, in the one place you look at on every page. Falls
+   * back to your initial, and the frame ring is drawn on a wrapper so it does
+   * not eat into the image the way a border on the Avatar itself would.
+   */
+  const face = (
+    <Box
+      sx={{
+        ...frameSx(frame),
+        borderRadius: '50%',
+        p: '2px',
+        display: 'inline-flex',
+        flexShrink: 0,
+      }}
+    >
+      <Avatar
+        src={tokenSrc(avatar)}
+        sx={{ width: 26, height: 26, bgcolor: 'background.default', fontSize: 12 }}
+      >
+        {username?.[0]?.toUpperCase()}
+      </Avatar>
+    </Box>
+  )
+
   return (
     <>
       {compact ? (
@@ -49,13 +78,13 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
           aria-expanded={Boolean(anchor)}
           aria-label={username ?? 'Account'}
         >
-          <AccountCircleIcon />
+          {face}
         </IconButton>
       ) : (
         <Button
           size="small"
           onClick={(e) => setAnchor(e.currentTarget)}
-          startIcon={<AccountCircleIcon />}
+          startIcon={face}
           aria-haspopup="menu"
           aria-expanded={Boolean(anchor)}
         >
@@ -86,6 +115,18 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
             <CollectionsBookmarkIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Collection</ListItemText>
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            close()
+            navigate('/achievements')
+          }}
+        >
+          <ListItemIcon>
+            <MilitaryTechIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Achievements</ListItemText>
         </MenuItem>
 
         <MenuItem

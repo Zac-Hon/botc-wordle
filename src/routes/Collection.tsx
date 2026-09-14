@@ -15,10 +15,13 @@ import Stack from '@mui/material/Stack'
 import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
 import { Link as RouterLink } from 'react-router-dom'
+import Tooltip from '@mui/material/Tooltip'
 import { ALL_CHARACTERS } from '../data/pools'
 import { VALUE_LABELS } from '../game/clueSpec'
+import { canMaster, collectionTier, missingModes } from '../game/mastery'
 import { useCollection } from '../game/useCollection'
 import { isConfigured } from '../lib/supabase'
+import { tokenSrc } from '../lib/tokens'
 import { useAuth } from '../store/auth'
 import type { Character } from '../game/types'
 
@@ -80,6 +83,9 @@ export function Collection() {
   const have = ALL_CHARACTERS.filter(
     (c) => (showStoryteller || !c.pools.isStoryteller) && owned.has(c.id),
   ).length
+  const mastered = ALL_CHARACTERS.filter(
+    (c) => collectionTier(c, byId.get(c.id)) === 'mastered',
+  ).length
 
   return (
     <Stack spacing={2} sx={{ py: 1 }}>
@@ -87,7 +93,7 @@ export function Collection() {
         <Typography variant="h5">Collection</Typography>
         <Typography variant="body2" color="text.secondary">
           Every character you have correctly named, from the dailies, Endless and Versus. The help
-          button in the top bar explains what the gold rings mean.
+          button in the top bar explains what the rings mean.
         </Typography>
       </Box>
 
@@ -96,6 +102,9 @@ export function Collection() {
           <Typography variant="h6" sx={{ fontFamily: 'inherit', fontWeight: 700 }}>
             {have} / {total}
           </Typography>
+          {mastered > 0 && (
+            <Chip size="small" variant="outlined" color="success" label={`${mastered} mastered`} />
+          )}
           <Box sx={{ flex: 1 }} />
           <FormControlLabel
             control={
@@ -118,6 +127,9 @@ export function Collection() {
       {bySet.map(([script, characters]) => {
         const setHave = characters.filter((c) => owned.has(c.id)).length
         const setDaily = characters.filter((c) => byId.get(c.id)?.earned_daily).length
+        const setMastered = characters.filter(
+          (c) => collectionTier(c, byId.get(c.id)) === 'mastered',
+        ).length
         return (
           <Accordion
             key={script}
@@ -136,6 +148,14 @@ export function Collection() {
               >
                 <Typography variant="subtitle1">{VALUE_LABELS[script] ?? script}</Typography>
                 <Box sx={{ flex: 1 }} />
+                {setMastered > 0 && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    label={`${setMastered} mastered`}
+                  />
+                )}
                 <Chip
                   size="small"
                   variant="outlined"
@@ -165,41 +185,70 @@ export function Collection() {
                 {characters.map((c) => {
                   const entry = byId.get(c.id)
                   const has = owned.has(c.id)
-                  const daily = Boolean(entry?.earned_daily)
-                  return (
-                    <Box key={c.id} sx={{ textAlign: 'center' }}>
+                  const tier = collectionTier(c, entry)
+                  const ringed = tier === 'ringed' || tier === 'mastered'
+                  const left = missingModes(c, entry)
+
+                  const hint = !has
+                    ? 'Not yet named'
+                    : tier === 'mastered'
+                      ? `${c.name}: mastered, named in all three modes`
+                      : left.length > 0
+                        ? `${c.name}: still to name in ${left.join(' and ')}`
+                        : canMaster(c)
+                          ? c.name
+                          : `${c.name}: never appears in a daily or Versus`
+
+                  const token = (
+                    <Box
+                      sx={{
+                        p: 0.35,
+                        borderRadius: '50%',
+                        // The gold ring marks the best way that character can be
+                        // earned: a daily for player characters, and Endless for
+                        // Fabled and Loric, which the dailies never serve. Set
+                        // server side by record_collection, and deliberately
+                        // unchanged: players earned these under that meaning.
+                        border: '2px solid',
+                        borderColor: ringed ? 'primary.main' : 'transparent',
+                        boxShadow: ringed ? '0 0 10px rgba(200,169,81,0.45)' : 'none',
+                        // Mastery is a second ring outside the first rather than
+                        // a recoloured one, so the two states read as additive.
+                        ...(tier === 'mastered'
+                          ? {
+                              outline: '2px solid',
+                              outlineColor: 'success.main',
+                              outlineOffset: '2px',
+                            }
+                          : {}),
+                        display: 'inline-block',
+                        lineHeight: 0,
+                      }}
+                    >
                       <Box
+                        component="img"
+                        src={tokenSrc(c)}
+                        alt={has ? c.name : 'Not yet named'}
+                        loading="lazy"
+                        width={52}
+                        height={52}
                         sx={{
-                          p: 0.35,
-                          borderRadius: '50%',
-                          // The ring marks the best way that character can be
-                          // earned: a daily for player characters, and Endless
-                          // for Fabled and Loric, which the dailies never
-                          // serve. Set server side by record_collection.
-                          border: '2px solid',
-                          borderColor: daily ? 'primary.main' : 'transparent',
-                          boxShadow: daily ? '0 0 10px rgba(200,169,81,0.45)' : 'none',
-                          display: 'inline-block',
-                          lineHeight: 0,
+                          width: 52,
+                          height: 52,
+                          // Unearned characters are silhouetted rather than
+                          // hidden, so the shape of what is left is visible.
+                          filter: has ? 'none' : 'grayscale(1) brightness(0.28)',
+                          opacity: has ? 1 : 0.55,
                         }}
-                      >
-                        <Box
-                          component="img"
-                          src={`${import.meta.env.BASE_URL}tokens/${c.image}`}
-                          alt={has ? c.name : 'Not yet named'}
-                          loading="lazy"
-                          width={52}
-                          height={52}
-                          sx={{
-                            width: 52,
-                            height: 52,
-                            // Unearned characters are silhouetted rather than
-                            // hidden, so the shape of what is left is visible.
-                            filter: has ? 'none' : 'grayscale(1) brightness(0.28)',
-                            opacity: has ? 1 : 0.55,
-                          }}
-                        />
-                      </Box>
+                      />
+                    </Box>
+                  )
+
+                  return (
+                    <Box key={c.id} sx={{ textAlign: 'center', pt: tier === 'mastered' ? 0.5 : 0 }}>
+                      <Tooltip title={hint} enterTouchDelay={0} disableInteractive>
+                        {token}
+                      </Tooltip>
                       <Typography
                         variant="caption"
                         sx={{

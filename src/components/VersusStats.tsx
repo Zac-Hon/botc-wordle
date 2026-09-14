@@ -1,4 +1,3 @@
-import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Paper from '@mui/material/Paper'
@@ -9,7 +8,7 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
-import { BY_ID } from '../data/pools'
+import { PlayerChip } from './PlayerChip'
 
 /** Games below this are still provisional; K is higher and ratings swing. */
 export const PROVISIONAL_GAMES = 10
@@ -40,48 +39,14 @@ export interface RatingRow {
   username: string
   pronouns: string | null
   avatar: string | null
+  title: string | null
+  frame: string | null
   rating: number
   peak_rating: number
   games: number
   wins: number
   losses: number
   draws: number
-}
-
-function token(id: string | null) {
-  return id ? BY_ID.get(id) : null
-}
-
-function PlayerCell({
-  username,
-  pronouns,
-  avatar,
-}: {
-  username: string
-  pronouns: string | null
-  avatar: string | null
-}) {
-  const c = token(avatar)
-  return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-      <Avatar
-        src={c ? `${import.meta.env.BASE_URL}tokens/${c.image}` : undefined}
-        sx={{ width: 26, height: 26, bgcolor: 'background.default', fontSize: 12 }}
-      >
-        {username[0]?.toUpperCase()}
-      </Avatar>
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.1 }} noWrap>
-          {username}
-        </Typography>
-        {pronouns && (
-          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
-            {pronouns}
-          </Typography>
-        )}
-      </Box>
-    </Stack>
-  )
 }
 
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
@@ -174,20 +139,18 @@ export function VersusStats({
                   : m.outcome === 'loss'
                     ? 'secondary.main'
                     : 'text.secondary'
-              const c = token(m.opponentAvatar)
               return (
                 <Stack key={m.matchId} direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-                  <Avatar
-                    src={c ? `${import.meta.env.BASE_URL}tokens/${c.image}` : undefined}
-                    sx={{ width: 30, height: 30, bgcolor: 'background.default', fontSize: 13 }}
-                  >
-                    {m.opponent?.[0]?.toUpperCase() ?? '?'}
-                  </Avatar>
                   <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
-                      {m.opponent ?? 'Unknown'}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
+                    <PlayerChip
+                      username={m.opponent ?? 'Unknown'}
+                      avatar={m.opponentAvatar}
+                      size={30}
+                      // An opponent who has since deleted their account has no
+                      // profile to open.
+                      link={m.opponent !== null}
+                    />
+                    <Typography variant="caption" color="text.secondary" sx={{ pl: 5 }}>
                       {Math.round(m.score)} to {Math.round(m.opponentScore)}
                     </Typography>
                   </Box>
@@ -236,7 +199,13 @@ export function VersusStats({
                   <TableRow key={r.username}>
                     <TableCell>{i + 1}</TableCell>
                     <TableCell>
-                      <PlayerCell username={r.username} pronouns={r.pronouns} avatar={r.avatar} />
+                      <PlayerChip
+                        username={r.username}
+                        pronouns={r.pronouns}
+                        avatar={r.avatar}
+                        title={r.title}
+                        frame={r.frame}
+                      />
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: 700 }}>
                       {r.rating}

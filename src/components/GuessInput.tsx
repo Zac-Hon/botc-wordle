@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography'
 import { VALUE_LABELS } from '../game/clueSpec'
 import { normalise } from '../game/closeness'
 import type { Character } from '../game/types'
+import { tokenSrcFromFile } from '../lib/tokens'
 
 /**
  * Matches on a normalised substring, so "washer" finds Washerwoman and
@@ -120,7 +121,7 @@ export function GuessInput({
           <Box component="li" key={key} {...rest} sx={{ gap: 1.25, opacity: already ? 0.4 : 1 }}>
             <Box
               component="img"
-              src={`${import.meta.env.BASE_URL}tokens/${c.image}`}
+              src={tokenSrcFromFile(c.image)}
               alt=""
               loading="lazy"
               width={30}

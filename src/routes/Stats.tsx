@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import Alert from '@mui/material/Alert'
-import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -18,7 +17,9 @@ import Typography from '@mui/material/Typography'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import { Link as RouterLink } from 'react-router-dom'
 import { BY_ID } from '../data/pools'
+import { PlayerChip } from '../components/PlayerChip'
 import { VersusStats, type PvpStats, type RatingRow } from '../components/VersusStats'
+import { tokenSrc } from '../lib/tokens'
 import { VALUE_LABELS } from '../game/clueSpec'
 import { isConfigured, supabase } from '../lib/supabase'
 import { useAuth } from '../store/auth'
@@ -29,6 +30,8 @@ interface GlobalRow {
   username: string
   pronouns: string | null
   avatar: string | null
+  title: string | null
+  frame: string | null
   played: number
   wins: number
   avg_guesses: number | null
@@ -51,6 +54,8 @@ interface LeaderRow {
   username: string
   pronouns: string | null
   avatar: string | null
+  title: string | null
+  frame: string | null
   mode: string
   guess_count: number
   solved: boolean
@@ -317,7 +322,13 @@ function MyStats({
                 <TableRow key={`${l.username}-${i}`}>
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>
-                    <PlayerCell username={l.username} pronouns={l.pronouns} avatar={l.avatar} />
+                    <PlayerChip
+                      username={l.username}
+                      pronouns={l.pronouns}
+                      avatar={l.avatar}
+                      title={l.title}
+                      frame={l.frame}
+                    />
                   </TableCell>
                   <TableCell align="right">{l.solved ? l.guess_count : 'N/A'}</TableCell>
                 </TableRow>
@@ -394,7 +405,13 @@ function Everyone({ rows }: { rows: GlobalRow[] | null }) {
               {rows.map((r) => (
                 <TableRow key={r.username}>
                   <TableCell>
-                    <PlayerCell username={r.username} pronouns={r.pronouns} avatar={r.avatar} />
+                    <PlayerChip
+                      username={r.username}
+                      pronouns={r.pronouns}
+                      avatar={r.avatar}
+                      title={r.title}
+                      frame={r.frame}
+                    />
                   </TableCell>
                   <TableCell align="right" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                     {r.played}
@@ -459,38 +476,6 @@ function Award({
   )
 }
 
-function PlayerCell({
-  username,
-  pronouns,
-  avatar,
-}: {
-  username: string
-  pronouns: string | null
-  avatar: string | null
-}) {
-  const c = avatar ? BY_ID.get(avatar) : null
-  return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-      <Avatar
-        src={c ? `${import.meta.env.BASE_URL}tokens/${c.image}` : undefined}
-        sx={{ width: 26, height: 26, bgcolor: 'background.default', fontSize: 12 }}
-      >
-        {username[0]?.toUpperCase()}
-      </Avatar>
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.1 }}>
-          {username}
-        </Typography>
-        {pronouns && (
-          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
-            {pronouns}
-          </Typography>
-        )}
-      </Box>
-    </Stack>
-  )
-}
-
 function Highlight({
   label,
   characterId,
@@ -508,7 +493,7 @@ function Highlight({
       {c && (
         <Box
           component="img"
-          src={`${import.meta.env.BASE_URL}tokens/${c.image}`}
+          src={tokenSrc(c)}
           alt=""
           width={44}
           height={44}

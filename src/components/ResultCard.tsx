@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { VALUE_LABELS } from '../game/clueSpec'
 import type { Character } from '../game/types'
+import { tokenSrcFromFile } from '../lib/tokens'
 
 /** Shown once the game is over: the token, the ability, and what it took. */
 export function ResultCard({
@@ -34,7 +35,7 @@ export function ResultCard({
       <Stack direction="row" spacing={2} sx={{ alignItems: 'flex-start' }}>
         <Box
           component="img"
-          src={`${import.meta.env.BASE_URL}tokens/${answer.image}`}
+          src={tokenSrcFromFile(answer.image)}
           alt={answer.name}
           sx={{ width: 76, height: 76, flexShrink: 0 }}
         />

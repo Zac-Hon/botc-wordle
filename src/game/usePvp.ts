@@ -9,6 +9,10 @@ export interface PvpPlayer {
   pronouns: string | null
   /** Character id of their chosen profile token, if they have set one. */
   avatar: string | null
+  /** Earned title they are wearing, if any. */
+  title: string | null
+  /** Earned avatar frame id, if any. See src/game/frames.ts. */
+  frame: string | null
   /** Ranked rating, null until they have played a ranked match. */
   rating: number | null
   score: number

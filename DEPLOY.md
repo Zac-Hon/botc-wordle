@@ -86,6 +86,7 @@ SQL Editor, in filename order:
 | `14_ranked_elo_queue.sql` | Ranked Versus: Elo ratings and the matchmaking queue |
 | `15_fix_ranked_start.sql` | Fixes ranked matches freezing before round one |
 | `16_parity_hooks.sql` | Exposes the spelling judge and scoring helpers for parity testing |
+| `17_achievements.sql` | Achievements, titles, avatar frames, public profiles |
 
 All are re-runnable **in order**. Each one records itself and refuses to run
 if a higher-numbered file has already been applied, because later files
@@ -96,7 +97,7 @@ ranked-start fix. Re-running the whole sequence is always safe.
 ## Before you share the link
 
 ```bash
-npm test              # 158 tests
+npm test              # 168 tests
 npm run verify:parity # TypeScript and Postgres agree on every clue and score
 npm run build         # must succeed
 ```

@@ -7,6 +7,13 @@ interface AuthState {
   user: User | null
   /** Display name from profiles, which preserves the casing the player chose. */
   username: string | null
+  pronouns: string | null
+  /** Character id of the earned token worn as a profile picture. */
+  avatar: string | null
+  /** Earned title worn next to the name, or null. */
+  title: string | null
+  /** Earned avatar frame id, or null. See src/game/frames.ts. */
+  frame: string | null
   /** True until the initial session lookup settles, so routes can wait. */
   loading: boolean
   error: string | null
@@ -40,6 +47,10 @@ export const useAuth = create<AuthState>((set, get) => ({
   session: null,
   user: null,
   username: null,
+  pronouns: null,
+  avatar: null,
+  title: null,
+  frame: null,
   loading: true,
   error: null,
 
@@ -60,11 +71,44 @@ export const useAuth = create<AuthState>((set, get) => ({
   loadProfile: async () => {
     const user = get().user
     if (!user) {
-      set({ username: null })
+      set({ username: null, pronouns: null, avatar: null, title: null, frame: null })
       return
     }
-    const { data } = await supabase.from('profiles').select('username').eq('id', user.id).maybeSingle()
-    set({ username: data?.username ?? null })
+
+    // The whole identity in one round trip, so the top bar can show the token
+    // the player earned rather than a generic icon.
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('username, pronouns, avatar_character_id, title, frame')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (error) {
+      // title and frame arrive with migration 17. Until it is applied the wide
+      // select fails outright, and losing the username with it would sign the
+      // player out of every screen that greets them by name.
+      const { data: basic } = await supabase
+        .from('profiles')
+        .select('username, pronouns, avatar_character_id')
+        .eq('id', user.id)
+        .maybeSingle()
+      set({
+        username: basic?.username ?? null,
+        pronouns: basic?.pronouns ?? null,
+        avatar: basic?.avatar_character_id ?? null,
+        title: null,
+        frame: null,
+      })
+      return
+    }
+
+    set({
+      username: data?.username ?? null,
+      pronouns: data?.pronouns ?? null,
+      avatar: data?.avatar_character_id ?? null,
+      title: data?.title ?? null,
+      frame: data?.frame ?? null,
+    })
   },
 
   signUp: async (username, password) => {
@@ -96,7 +140,15 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     await supabase.auth.signOut()
-    set({ session: null, user: null, username: null })
+    set({
+      session: null,
+      user: null,
+      username: null,
+      pronouns: null,
+      avatar: null,
+      title: null,
+      frame: null,
+    })
   },
 
   handleStaleSession: (error) => {
@@ -106,6 +158,10 @@ export const useAuth = create<AuthState>((set, get) => ({
       session: null,
       user: null,
       username: null,
+      pronouns: null,
+      avatar: null,
+      title: null,
+      frame: null,
       error: 'That account no longer exists. Please sign in again.',
     })
     return true

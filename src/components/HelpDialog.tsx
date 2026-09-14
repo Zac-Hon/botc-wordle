@@ -145,10 +145,44 @@ export function HelpDialog({ open, onClose }: { open: boolean; onClose: () => vo
             for most, or in Endless for Fabled and Loric, which never appear in the dailies.
           </Typography>
         </Stack>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 1 }}>
+          <Box
+            sx={{
+              width: 34,
+              height: 34,
+              borderRadius: '50%',
+              border: '2px solid',
+              borderColor: 'primary.main',
+              boxShadow: '0 0 10px rgba(200,169,81,0.45)',
+              outline: '2px solid',
+              outlineColor: 'success.main',
+              outlineOffset: '2px',
+              flexShrink: 0,
+              ml: '2px',
+            }}
+          />
+          <Typography variant="body2" color="text.secondary">
+            A second green ring means mastered: you have named that character in all three modes.
+            Fabled and Loric cannot be mastered, because they appear in no daily and never come up
+            in Versus.
+          </Typography>
+        </Stack>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Endless and Versus wins on everyone else still unlock the character, just without the
-          ring. Characters you have not named yet show as dark silhouettes, so you can see what is
-          left.
+          gold ring. Characters you have not named yet show as dark silhouettes, so you can see what
+          is left.
+        </Typography>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Typography variant="subtitle2" gutterBottom>
+          Achievements
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Milestones across the dailies, your collection and Versus. Each one you finish unlocks a
+          title to wear next to your name, and a few unlock a coloured frame for your avatar. The
+          Achievements page lists every one, including the ones you have not started, with how far
+          off you are.
         </Typography>
 
         <Divider sx={{ my: 2 }} />

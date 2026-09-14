@@ -25,7 +25,7 @@ logic that must not run in the browser runs as Postgres functions instead.
 src/
   data/        characters.json (generated), pools.ts
   game/        Pure game logic and the React hooks that drive each mode
-  lib/         supabase.ts, moderation.ts
+  lib/         supabase.ts, moderation.ts, tokens.ts
   store/       zustand: auth, settings
   components/  Grid, input, hangman, help, PvP round components
   routes/      One file per page
@@ -36,8 +36,8 @@ docs/          This file and GAME.md
 ```
 
 `src/game/` below the hooks is pure TypeScript with no React and no network:
-`compare`, `hangman`, `scoring`, `closeness`, `daily`, `random`, `stats`. That
-is what the 158 tests cover.
+`compare`, `hangman`, `scoring`, `closeness`, `daily`, `random`, `stats`,
+`mastery`, `frames`. That is what the 168 tests cover.
 
 ## The governing rule: answers never reach the browser early
 
@@ -85,6 +85,13 @@ Two mitigations keep them honest:
 **Run it after any change to either comparator or to the scoring.** It needs
 only the public anon key, because `botc_compare` takes both sides as arguments
 and therefore reveals nothing.
+
+The same split shows up again in **avatar frames**. The database decides which
+frames exist, in `achievements.grants_frame`, because that is what stops anyone
+wearing one they have not earned; the client decides how each is drawn, in
+`src/game/frames.ts`, because that is presentation. `verify:parity` asserts the
+two sides list identical ids. Without it, a frame the catalogue can hand out
+with no drawing renders as a plain avatar and nobody finds out.
 
 ## Data pipeline
 
@@ -196,6 +203,16 @@ materialised view, because a view would need a scheduled `REFRESH` and there is
 no scheduler. The cost lands on whoever just finished a game, one row, and
 `global_stats()` becomes a single indexed scan. `rebuild_player_stats()` is the
 repair hatch if it ever drifts.
+
+`refresh_achievements()` runs from inside that same trigger function rather than
+from triggers of its own, so the two can never disagree about when a player's
+figures changed, and `refresh_player_stats` has always run first by the time
+progress reads it. It reads the summary columns instead of re-aggregating
+`game_sessions`, so a finished game costs a handful of indexed lookups. Progress
+is stored on `user_achievements` so the checklist page is one query rather than
+nineteen aggregates. `rebuild_achievements()` is the matching repair hatch, and
+must be re-run after a seed that changes the set sizes, because the two
+set-completion goals are read from the character data.
 
 ## Applying SQL
 

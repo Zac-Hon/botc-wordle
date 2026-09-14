@@ -15,6 +15,7 @@ import { createClient } from '@supabase/supabase-js'
 import { ALL_CHARACTERS } from '../src/data/pools.js'
 import { compare, matchFraction } from '../src/game/compare.js'
 import { judgeName } from '../src/game/closeness.js'
+import { FRAMES } from '../src/game/frames.js'
 import { HANGMAN_START } from '../src/game/hangman.js'
 import { rngFrom } from '../src/game/random.js'
 
@@ -112,8 +113,36 @@ for (let i = 0; i < 200; i++) {
   }
 }
 
+// --- Avatar frames ------------------------------------------------------------
+// The database decides which frames exist, because it is what stops anyone
+// wearing one they have not earned. The client decides how each is drawn. A
+// frame the catalogue can hand out with no drawing here renders as a plain
+// avatar and nobody finds out; a drawing with no achievement behind it is dead
+// code that looks like a feature.
+console.log('Checking the avatar frame catalogue ...')
+{
+  const { data, error } = await supabase.from('achievements').select('id, grants_frame')
+  if (error) {
+    console.error('Reading achievements failed:', error.message)
+    console.error('Apply supabase/17_achievements.sql first.')
+    process.exit(1)
+  }
+
+  const inDb = new Set(
+    (data ?? []).map((r) => r.grants_frame as string | null).filter((f): f is string => Boolean(f)),
+  )
+  const inApp = new Set(FRAMES.map((f) => f.id))
+
+  for (const id of inDb) {
+    if (!inApp.has(id)) report(`frame "${id}"`, 'a drawing in frames.ts', 'nothing')
+  }
+  for (const id of inApp) {
+    if (!inDb.has(id)) report(`frame "${id}"`, 'an achievement that grants it', 'nothing')
+  }
+}
+
 if (mismatches > 0) {
   console.error(`FAILED: ${mismatches} disagreement(s).`)
   process.exit(1)
 }
-console.log('OK: spelling judge, unsolved scoring and the hangman threshold all agree.')
+console.log('OK: spelling judge, unsolved scoring, hangman threshold and frames all agree.')

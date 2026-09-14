@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography'
 import { CLUE_SPEC } from '../game/clueSpec'
 import { ClueCell } from './ClueCell'
 import type { ClueRow } from '../game/compare'
+import { tokenSrcFromFile } from '../lib/tokens'
 
 export interface GuessEntry {
   id: string
@@ -78,7 +79,7 @@ export function GuessGrid({ guesses }: { guesses: GuessEntry[] }) {
             <Box role="rowheader" sx={stickyName}>
               <Box
                 component="img"
-                src={`${import.meta.env.BASE_URL}tokens/${g.image}`}
+                src={tokenSrcFromFile(g.image)}
                 alt=""
                 loading="lazy"
                 sx={{ width: { xs: 26, sm: 34 }, height: { xs: 26, sm: 34 }, flexShrink: 0 }}

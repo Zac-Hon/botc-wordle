@@ -117,6 +117,44 @@ in a daily for most characters, or in Endless for Fabled and Loric, which never
 appear in the dailies. Without that exception 25 characters could never carry a
 ring and a complete collection would be impossible.
 
+A **second green ring** means mastered: named in all three modes. Fabled and
+Loric cannot be mastered, because they appear in no daily and are never offered
+in Versus, so two of the three are out of reach. Counting a single Endless win
+as mastery would have handed out the top tier for the least work, so they are
+excluded and counted separately instead.
+
+## Achievements, titles and frames
+
+Nineteen milestones across three categories, listed on the Achievements page
+including the ones you have not started, with how far off you are.
+
+| Category | Examples |
+|---|---|
+| Dailies | first solve, 10 / 50 / 200 wins, a 7 or 30 day streak, a one-guess solve |
+| Collection | 25 / 75 / 140 named, 25 gold rings, a completed set, a first mastery |
+| Versus | first ranked win, 10 wins, 1200 and 1400 rating, beating someone rated 100 above you |
+
+Each one unlocks a **title** to wear next to your name, and five of them also
+unlock a coloured **frame** for your avatar, so frames stay the scarcer of the
+two. Both show wherever you appear: the top bar, the leaderboards, the Versus
+lobby and your public profile.
+
+Progress is recomputed server side whenever a game or a rating changes, by the
+same trigger that maintains the summary stats. Nothing is ever taken back: a
+streak you lose does not take the achievement with it.
+
+Which titles and frames you may wear is checked in `update_profile`, not in the
+browser, for the same reason the avatar always has been. Editing a request gets
+you an error, not a title.
+
+## Public profiles
+
+Every name on a leaderboard, ladder or Versus lobby links to that player's
+profile: their avatar and title, their collection progress by set, their rating
+and everything they have earned. Nothing there is new to the world; the figures
+were already reachable through the leaderboards. The achievements are the
+addition, and they exist to be seen.
+
 ## Versus
 
 Two players, three rounds a cycle, one to three cycles.

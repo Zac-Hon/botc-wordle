@@ -10,37 +10,59 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import Chip from '@mui/material/Chip'
 import { Link as RouterLink } from 'react-router-dom'
 import { BY_ID } from '../data/pools'
+import { getFrame } from '../game/frames'
+import { frameSx } from '../game/frames'
+import { useAchievements } from '../game/useAchievements'
 import { checkPronouns } from '../lib/moderation'
 import { isConfigured, supabase } from '../lib/supabase'
+import { tokenSrc } from '../lib/tokens'
 import { useAuth } from '../store/auth'
 import { useCollection } from '../game/useCollection'
 
 export function Profile() {
-  const { user, username, loading: authLoading, loadProfile } = useAuth()
+  const {
+    user,
+    username,
+    loading: authLoading,
+    loadProfile,
+    pronouns: storePronouns,
+    avatar: storeAvatar,
+    title: storeTitle,
+    frame: storeFrame,
+  } = useAuth()
   const { ownedCharacters, loading: collLoading } = useCollection()
+  const { titles, frames, loading: achLoading } = useAchievements()
 
   const [pronouns, setPronouns] = useState('')
   const [avatar, setAvatar] = useState<string | null>(null)
+  const [title, setTitle] = useState<string | null>(null)
+  const [frame, setFrame] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
 
+  // The store already holds the whole profile, so this seeds the form from it
+  // rather than making a second request for what the top bar just fetched.
+  //
+  // It waits for a username before seeding, because that is the signal that
+  // loadProfile has resolved; seeding on `user` alone would fill the form with
+  // the store's initial nulls and then never correct itself. It seeds exactly
+  // once, so a later refresh cannot discard an edit in progress.
   useEffect(() => {
-    if (!user || !isConfigured) return
-    void supabase
-      .from('profiles')
-      .select('pronouns, avatar_character_id')
-      .eq('id', user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        setPronouns(data?.pronouns ?? '')
-        setAvatar(data?.avatar_character_id ?? null)
-        setLoaded(true)
-      })
-  }, [user])
+    if (!user || loaded || username === null) return
+    setPronouns(storePronouns ?? '')
+    setAvatar(storeAvatar)
+    setTitle(storeTitle)
+    setFrame(storeFrame)
+    setLoaded(true)
+  }, [user, loaded, username, storePronouns, storeAvatar, storeTitle, storeFrame])
+
+  // A different account gets a fresh form.
+  useEffect(() => setLoaded(false), [user?.id])
 
   const pronounError = useMemo(() => {
     const result = checkPronouns(pronouns)
@@ -56,12 +78,28 @@ export function Profile() {
     if (pronounError) return
     setSaving(true)
     setError(null)
-    const { error: err } = await supabase.rpc('update_profile', {
+    const base = {
       p_pronouns: pronouns.trim(),
       p_avatar: avatar,
       p_clear_pronouns: pronouns.trim().length === 0,
       p_clear_avatar: avatar === null,
+    }
+
+    let { error: err } = await supabase.rpc('update_profile', {
+      ...base,
+      p_title: title,
+      p_frame: frame,
+      p_clear_title: title === null,
+      p_clear_frame: frame === null,
     })
+
+    // Titles and frames arrive with migration 17. A deploy that lands before
+    // the SQL is applied would otherwise make saving a profile fail outright,
+    // taking pronouns and the avatar down with a feature nobody has yet.
+    if (err && /update_profile/i.test(err.message)) {
+      ;({ error: err } = await supabase.rpc('update_profile', base))
+    }
+
     setSaving(false)
     if (err) {
       setError(err.message)
@@ -114,14 +152,21 @@ export function Profile() {
 
       <Paper elevation={0} sx={{ p: 2.5 }}>
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2 }}>
-          <Avatar
-            src={avatarChar ? `${import.meta.env.BASE_URL}tokens/${avatarChar.image}` : undefined}
-            sx={{ width: 64, height: 64, bgcolor: 'background.default' }}
-          >
-            {username?.[0]?.toUpperCase()}
-          </Avatar>
+          <Box sx={{ ...frameSx(frame), borderRadius: '50%', p: '3px', display: 'inline-flex' }}>
+            <Avatar
+              src={tokenSrc(avatarChar)}
+              sx={{ width: 64, height: 64, bgcolor: 'background.default' }}
+            >
+              {username?.[0]?.toUpperCase()}
+            </Avatar>
+          </Box>
           <Box>
             <Typography variant="h6">{username}</Typography>
+            {title && (
+              <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 600 }}>
+                {title}
+              </Typography>
+            )}
             <Typography variant="body2" color="text.secondary">
               {avatarChar ? avatarChar.name : 'No character picked'}
             </Typography>
@@ -139,6 +184,80 @@ export function Profile() {
           fullWidth
           sx={{ mb: 2 }}
         />
+
+        <Typography variant="subtitle2" gutterBottom>
+          Title
+        </Typography>
+        {achLoading ? (
+          <CircularProgress size={20} sx={{ mb: 2, display: 'block' }} />
+        ) : titles.length === 0 ? (
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            No titles yet. <RouterLink to="/achievements">Achievements</RouterLink> shows how to earn
+            them.
+          </Typography>
+        ) : (
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', mb: 2 }} useFlexGap>
+            <Chip
+              size="small"
+              label="None"
+              color={title === null ? 'primary' : 'default'}
+              variant={title === null ? 'filled' : 'outlined'}
+              onClick={() => setTitle(null)}
+            />
+            {titles.map((t) => (
+              <Chip
+                key={t}
+                size="small"
+                label={t}
+                color={title === t ? 'primary' : 'default'}
+                variant={title === t ? 'filled' : 'outlined'}
+                onClick={() => setTitle(t)}
+              />
+            ))}
+          </Stack>
+        )}
+
+        <Typography variant="subtitle2" gutterBottom>
+          Frame
+        </Typography>
+        {achLoading ? (
+          <CircularProgress size={20} sx={{ mb: 2, display: 'block' }} />
+        ) : frames.length === 0 ? (
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            No frames yet. A few achievements unlock one.
+          </Typography>
+        ) : (
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', mb: 2 }} useFlexGap>
+            <Chip
+              size="small"
+              label="None"
+              color={frame === null ? 'primary' : 'default'}
+              variant={frame === null ? 'filled' : 'outlined'}
+              onClick={() => setFrame(null)}
+            />
+            {frames.map((id) => {
+              const f = getFrame(id)
+              return (
+                <Chip
+                  key={id}
+                  size="small"
+                  label={f?.name ?? id}
+                  variant={frame === id ? 'filled' : 'outlined'}
+                  onClick={() => setFrame(id)}
+                  sx={
+                    f
+                      ? {
+                          borderColor: f.color,
+                          color: frame === id ? undefined : f.color,
+                          bgcolor: frame === id ? f.color : undefined,
+                        }
+                      : undefined
+                  }
+                />
+              )
+            })}
+          </Stack>
+        )}
 
         <Button variant="contained" onClick={() => void save()} disabled={saving || Boolean(pronounError)}>
           {saving ? 'Saving...' : 'Save'}
@@ -189,7 +308,7 @@ export function Profile() {
                 >
                   <Box
                     component="img"
-                    src={`${import.meta.env.BASE_URL}tokens/${c.image}`}
+                    src={tokenSrc(c)}
                     alt={c.name}
                     loading="lazy"
                     width={48}

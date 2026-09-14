@@ -10,6 +10,7 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import HistoryIcon from '@mui/icons-material/History'
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark'
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi'
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech'
 import { Link as RouterLink } from 'react-router-dom'
 import { CLASSIC_POOL, FULL_POOL } from '../data/pools'
 import { useAuth } from '../store/auth'
@@ -62,6 +63,12 @@ export function Home() {
       title: 'Archive',
       blurb: 'Replay any puzzle you missed. Does not affect your streak.',
       icon: <HistoryIcon fontSize="large" />,
+    },
+    {
+      to: '/achievements',
+      title: 'Achievements',
+      blurb: 'Milestones that unlock titles and frames for your avatar.',
+      icon: <MilitaryTechIcon fontSize="large" />,
     },
     {
       to: '/stats',
